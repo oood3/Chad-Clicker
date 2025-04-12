@@ -1,82 +1,3 @@
-// Реферальная система
-let referralCount = localStorage.getItem('referralCount') ? parseInt(localStorage.getItem('referralCount')) : 0;
-let referralEarned = localStorage.getItem('referralEarned') ? parseInt(localStorage.getItem('referralEarned')) : 0;
-const userId = localStorage.getItem('userId') || generateUserId();
-
-function generateUserId() {
-    const id = 'user_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('userId', id);
-    return id;
-}
-
-// Проверка реферального параметра в URL
-function checkReferral() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get('ref');
-    
-    if (ref && ref !== userId && !localStorage.getItem('ref_used')) {
-        // Новый пользователь по реферальной ссылке
-        score += 5000;
-        scoreElement.textContent = score;
-        localStorage.setItem('score', score);
-        localStorage.setItem('ref_used', ref);
-        
-        // Здесь должна быть отправка на сервер о новом реферале
-        // В демо-версии просто сохраняем в localStorage
-        const referrals = JSON.parse(localStorage.getItem('referrals') || '[]');
-        referrals.push({ referrer: ref, date: new Date().toISOString() });
-        localStorage.setItem('referrals', JSON.stringify(referrals));
-    }
-}
-
-// Инициализация реферальной системы
-document.addEventListener('DOMContentLoaded', () => {
-    checkReferral();
-    
-    const referralButton = document.getElementById('referral-button');
-    const referralModal = document.getElementById('referral-modal');
-    const closeReferral = document.querySelector('.close-referral');
-    const referralLink = document.getElementById('referral-link');
-    const copyButton = document.getElementById('copy-referral');
-    const referralCountElement = document.getElementById('referral-count');
-    const referralEarnedElement = document.getElementById('referral-earned');
-    
-    // Обновляем статистику
-    referralCountElement.textContent = referralCount;
-    referralEarnedElement.textContent = referralEarned;
-    
-    // Генерируем реферальную ссылку
-    referralLink.value = `${window.location.origin}${window.location.pathname}?ref=${userId}`;
-    
-    // Открытие/закрытие модального окна
-    referralButton.addEventListener('click', () => {
-        referralModal.style.display = 'flex';
-    });
-    
-    closeReferral.addEventListener('click', () => {
-        referralModal.style.display = 'none';
-    });
-    
-    // Копирование ссылки
-    copyButton.addEventListener('click', () => {
-        referralLink.select();
-        document.execCommand('copy');
-        
-        // Анимация успешного копирования
-        copyButton.textContent = 'Скопировано!';
-        setTimeout(() => {
-            copyButton.textContent = 'Копировать';
-        }, 2000);
-    });
-    
-    // Закрытие при клике вне модального окна
-    window.addEventListener('click', (event) => {
-        if (event.target === referralModal) {
-            referralModal.style.display = 'none';
-        }
-    });
-});
-
 let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
 let clickPower = localStorage.getItem('clickPower') ? parseInt(localStorage.getItem('clickPower')) : 1;
 let currentSkin = localStorage.getItem('currentSkin') || 'your-image.png';
@@ -96,10 +17,20 @@ const upgrades = {
     1000000000: 2999
 };
 
-// Получаем состояние улучшений и скинов из localStorage
 const boughtUpgrades = JSON.parse(localStorage.getItem('boughtUpgrades')) || {};
 const boughtSkins = JSON.parse(localStorage.getItem('boughtSkins')) || {};
 let selectedSkin = localStorage.getItem('selectedSkin') || currentSkin;
+
+// Реферальная система
+let referralCount = localStorage.getItem('referralCount') ? parseInt(localStorage.getItem('referralCount')) : 0;
+let referralEarned = localStorage.getItem('referralEarned') ? parseInt(localStorage.getItem('referralEarned')) : 0;
+const userId = localStorage.getItem('userId') || generateUserId();
+
+function generateUserId() {
+    const id = 'user_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('userId', id);
+    return id;
+}
 
 const scoreElement = document.getElementById('score');
 const clickableImage = document.getElementById('clickable-image');
@@ -117,30 +48,37 @@ const resetModal = document.getElementById('reset-modal');
 const closeResetModal = document.querySelector('.reset-modal-content .close-reset');
 const confirmResetButton = document.getElementById('confirm-reset');
 const cancelResetButton = document.getElementById('cancel-reset');
-
-// Для магазина
 const shopButton = document.getElementById('shop-button');
 const shopModal = document.getElementById('shop-modal');
 const closeShopModal = document.querySelector('.shop-modal-content .close-shop');
 
-// Устанавливаем начальные значения
+// Реферальные элементы
+const referralButton = document.getElementById('referral-button');
+const referralModal = document.getElementById('referral-modal');
+const closeReferral = document.querySelector('.referral-modal-content .close-referral');
+const referralLink = document.getElementById('referral-link');
+const copyButton = document.getElementById('copy-referral');
+const referralCountElement = document.getElementById('referral-count');
+const referralEarnedElement = document.getElementById('referral-earned');
+
+// Инициализация
 scoreElement.textContent = score;
+initializeUpgradeButtons();
+checkReferral();
+updateReferralStats();
 
 function initializeUpgradeButtons() {
     document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
         const cost = Object.keys(upgrades)[index];
         if (boughtUpgrades[cost]) {
-            button.disabled = true; // Блокируем купленные улучшения
+            button.disabled = true;
         } else if (index > 0 && !boughtUpgrades[Object.keys(upgrades)[index - 1]]) {
-            button.disabled = true; // Блокируем улучшения, пока предыдущее не куплено
+            button.disabled = true;
         } else {
-            button.disabled = false; // Разблокируем доступные улучшения
+            button.disabled = false;
         }
     });
 }
-
-// Запускаем начальную инициализацию кнопок
-initializeUpgradeButtons();
 
 clickableImage.addEventListener('click', (event) => {
     score += clickPower;
@@ -174,7 +112,6 @@ function checkForUpgrades() {
     initializeUpgradeButtons();
 }
 
-// Обработчики для кнопок улучшений
 document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
     button.addEventListener('click', () => {
         const cost = Object.keys(upgrades)[index];
@@ -200,7 +137,6 @@ document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
     });
 });
 
-// Открытие и закрытие модального окна магазина
 shopButton.addEventListener('click', () => {
     shopModal.style.display = 'flex';
     updateShopButtons();
@@ -210,29 +146,27 @@ closeShopModal.addEventListener('click', () => {
     shopModal.style.display = 'none';
 });
 
-// Покупка скинов
 document.querySelectorAll('.buy-button').forEach((button) => {
     button.addEventListener('click', () => {
         const cost = parseInt(button.getAttribute('data-cost'));
         const skin = button.getAttribute('data-skin');
 
-        // Проверяем, хватает ли денег и не куплен ли скин ранее
         if (score >= cost && !boughtSkins[skin]) {
-            score -= cost;  // Уменьшаем счет только если хватает денег
-            boughtSkins[skin] = true;  // Отмечаем, что скин куплен
+            score -= cost;
+            boughtSkins[skin] = true;
 
             localStorage.setItem('score', score);
             localStorage.setItem('boughtSkins', JSON.stringify(boughtSkins));
             scoreElement.textContent = score;
 
-            button.textContent = 'ВЫБРАТЬ'; // Меняем текст кнопки после покупки
+            button.textContent = 'ВЫБРАТЬ';
             button.disabled = false;
         } else if (boughtSkins[skin]) {
             selectedSkin = skin;
             clickableImage.src = selectedSkin;
             localStorage.setItem('selectedSkin', selectedSkin);
 
-            updateShopButtons(); // Обновляем кнопки в магазине
+            updateShopButtons();
         } else {
             showError(`Недостаточно чадов. У вас ${score}. Вам нужно ${cost}`);
         }
@@ -247,14 +181,13 @@ function updateShopButtons() {
                 button.textContent = 'ВЫБРАНО';
                 button.classList.add('selected-button');
             } else {
-                button.textContent = 'ВЫБРАНО';
+                button.textContent = 'ВЫБРАТЬ';
                 button.classList.remove('selected-button');
             }
         }
     });
 }
 
-// Промокод
 promoButton.addEventListener('click', () => {
     promoModal.style.display = 'flex';
 });
@@ -273,7 +206,7 @@ activatePromoButton.addEventListener('click', () => {
     } else if (promoCode === 'Пупс') {
         if (!isPromoCodeUsed) {
             localStorage.setItem('promoCodeUsed', 'true');
-promoMessageElement.style.color = 'green'; // Устанавливаем зеленый цвет
+            promoMessageElement.style.color = 'green';
             showPromoMessage('Промокод успешно активирован ждите приз!');
             setTimeout(() => {
                 score += 10000;
@@ -282,7 +215,7 @@ promoMessageElement.style.color = 'green'; // Устанавливаем зел�
                 checkForUpgrades();
             }, 20000);
         } else {
-promoMessageElement.textContent = 'Этот промокод уже был использован';
+            promoMessageElement.textContent = 'Этот промокод уже был использован';
             showPromoMessage(promoMessageElement.textContent);
         }
     } else {
@@ -300,7 +233,6 @@ function showPromoMessage(message) {
     }, 5000);
 }
 
-// Сброс игры
 resetButton.addEventListener('click', () => {
     resetModal.style.display = 'flex';
 });
@@ -328,4 +260,57 @@ confirmResetButton.addEventListener('click', () => {
 
 cancelResetButton.addEventListener('click', () => {
     resetModal.style.display = 'none';
+});
+
+// Реферальные функции
+function checkReferral() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    
+    if (ref && ref !== userId && !localStorage.getItem('ref_used')) {
+        score += 5000;
+        scoreElement.textContent = score;
+        localStorage.setItem('score', score);
+        localStorage.setItem('ref_used', ref);
+        
+        // В реальном приложении здесь должен быть запрос к серверу
+        const referrals = JSON.parse(localStorage.getItem('referrals') || '[]');
+        referrals.push({ referrer: ref, date: new Date().toISOString() });
+        localStorage.setItem('referrals', JSON.stringify(referrals));
+        
+        showError(`🎉 Вы получили 5000 Чадов за регистрацию по реферальной ссылке!`);
+    }
+}
+
+function updateReferralStats() {
+    const referrals = JSON.parse(localStorage.getItem('referrals') || '[]');
+    referralCount = referrals.length;
+    referralEarned = referralCount * 19500;
+    
+    localStorage.setItem('referralCount', referralCount);
+    localStorage.setItem('referralEarned', referralEarned);
+    
+    referralCountElement.textContent = referralCount;
+    referralEarnedElement.textContent = referralEarned;
+}
+
+// Инициализация реферальной системы
+referralLink.value = `${window.location.origin}${window.location.pathname}?ref=${userId}`;
+
+referralButton.addEventListener('click', () => {
+    referralModal.style.display = 'flex';
+});
+
+closeReferral.addEventListener('click', () => {
+    referralModal.style.display = 'none';
+});
+
+copyButton.addEventListener('click', () => {
+    referralLink.select();
+    document.execCommand('copy');
+    
+    copyButton.textContent = 'Скопировано!';
+    setTimeout(() => {
+        copyButton.textContent = 'Копировать';
+    }, 2000);
 });
