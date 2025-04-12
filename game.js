@@ -72,9 +72,10 @@ document.querySelectorAll('.buy-stars-button').forEach(button => {
         const chads = parseInt(button.getAttribute('data-chads'));
         const stars = parseInt(button.getAttribute('data-stars'));
         
-        // Режим отладки (вне Telegram)
-        if (!isTelegramWebApp()) {
-            if(confirm(`Тестовый режим: Получить ${chads} Чадов за ${stars} Stars?`)) {
+        // Режим отладки (для тестов вне Telegram)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('debug')) {
+            if(confirm(`[ТЕСТ] Получить ${chads} Чадов за ${stars} Stars?`)) {
                 score += chads;
                 scoreElement.textContent = score;
                 localStorage.setItem('score', score);
@@ -84,41 +85,39 @@ document.querySelectorAll('.buy-stars-button').forEach(button => {
         }
 
         // Реальный режим (в Telegram)
+        if (!window.Telegram?.WebApp?.initData) {
+            alert("Откройте игру через Telegram-бота для покупки!");
+            return;
+        }
+
         try {
             Telegram.WebApp.openInvoice({
-                title: `Покупка ${chads} Чадов`,
-                description: `Получите ${chads} Чадов за ${stars} Telegram Stars`,
+                title: `Купить ${chads} Чадов`,
+                description: `Мгновенная доставка ${chads} Чадов в ваш аккаунт`,
                 currency: "USD",
-                prices: [
-                    { label: `${stars} Stars`, amount: stars * 100 }
-                ],
+                prices: [{ label: `${stars} Stars`, amount: stars * 100 }],
                 payload: JSON.stringify({
-                    userId: Telegram.WebApp.initDataUnsafe.user?.id,
-                    product: `chads_${chads}`
+                    user_id: Telegram.WebApp.initDataUnsafe.user?.id,
+                    item: `chads_${stars}`
                 }),
-                provider_token: "2051251535:TEST:OTk5MDA4ODgxLTAwNQ" // Замените на реальный токен!
+                provider_token: "2051251535:TEST:OTk5MDA4ODgxLTAwNQ", // Пример: "123456789:TEST:abcdef"
+                need_name: false,
+                need_phone_number: false,
+                need_email: false,
+                need_shipping_address: false
             }, (status) => {
                 if (status === "paid") {
                     score += chads;
                     scoreElement.textContent = score;
                     localStorage.setItem('score', score);
                     showStarsAnimation(chads);
-                    
-                    // Здесь можно добавить отправку данных на сервер для верификации
-                    // if (Telegram.WebApp.initDataUnsafe.query_id) {
-                    //     fetch('ваш-сервер/verify-payment', {
-                    //         method: 'POST',
-                    //         body: JSON.stringify({
-                    //             query_id: Telegram.WebApp.initDataUnsafe.query_id
-                    //         })
-                    //     });
-                    // }
+                    Telegram.WebApp.close(); // Закрываем WebApp после оплаты
                 } else {
-                    showError("Оплата не прошла 😢");
+                    showError("Оплата отменена ❌");
                 }
             });
-        } catch (error) {
-            showError("Ошибка: " + error.message);
+        } catch (e) {
+            showError("Ошибка: " + e.message);
         }
     });
 });
