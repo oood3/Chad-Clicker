@@ -1,4 +1,4 @@
-﻿let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
+let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
 let clickPower = localStorage.getItem('clickPower') ? parseInt(localStorage.getItem('clickPower')) : 1;
 let currentSkin = localStorage.getItem('currentSkin') || 'your-image.png';
 
@@ -47,20 +47,96 @@ const closeShopModal = document.querySelector('.shop-modal-content .close-shop')
 // Устанавливаем начальные значения
 scoreElement.textContent = score;
 
+// ================== НОВЫЙ КОД ================== //
+// Проверяем, что это Telegram WebApp (обновленная версия)
+const isTelegramWebApp = () => {
+    // Проверяем параметр URL ?debug=1 для тестирования вне Telegram
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDebugMode = urlParams.has('debug');
+    
+    return isDebugMode || (window.Telegram?.WebApp?.initData);
+};
+
+// Функция для показа анимации при покупке
+function showStarsAnimation(chads) {
+    const successMsg = document.createElement('div');
+    successMsg.className = 'stars-success-animation';
+    successMsg.textContent = `+${chads} Чадов!`;
+    document.body.appendChild(successMsg);
+    setTimeout(() => successMsg.remove(), 2000);
+}
+
+// Обработчики для покупки за Telegram Stars
+document.querySelectorAll('.buy-stars-button').forEach(button => {
+    button.addEventListener('click', async () => {
+        const chads = parseInt(button.getAttribute('data-chads'));
+        const stars = parseInt(button.getAttribute('data-stars'));
+        
+        // Режим отладки (вне Telegram)
+        if (!isTelegramWebApp()) {
+            if(confirm(`Тестовый режим: Получить ${chads} Чадов за ${stars} Stars?`)) {
+                score += chads;
+                scoreElement.textContent = score;
+                localStorage.setItem('score', score);
+                showStarsAnimation(chads);
+            }
+            return;
+        }
+
+        // Реальный режим (в Telegram)
+        try {
+            Telegram.WebApp.openInvoice({
+                title: `Покупка ${chads} Чадов`,
+                description: `Получите ${chads} Чадов за ${stars} Telegram Stars`,
+                currency: "USD",
+                prices: [
+                    { label: `${stars} Stars`, amount: stars * 100 }
+                ],
+                payload: JSON.stringify({
+                    userId: Telegram.WebApp.initDataUnsafe.user?.id,
+                    product: `chads_${chads}`
+                }),
+                provider_token: "YOUR_PROVIDER_TOKEN" // Замените на реальный токен!
+            }, (status) => {
+                if (status === "paid") {
+                    score += chads;
+                    scoreElement.textContent = score;
+                    localStorage.setItem('score', score);
+                    showStarsAnimation(chads);
+                    
+                    // Здесь можно добавить отправку данных на сервер для верификации
+                    // if (Telegram.WebApp.initDataUnsafe.query_id) {
+                    //     fetch('ваш-сервер/verify-payment', {
+                    //         method: 'POST',
+                    //         body: JSON.stringify({
+                    //             query_id: Telegram.WebApp.initDataUnsafe.query_id
+                    //         })
+                    //     });
+                    // }
+                } else {
+                    showError("Оплата не прошла 😢");
+                }
+            });
+        } catch (error) {
+            showError("Ошибка: " + error.message);
+        }
+    });
+});
+// ================== КОНЕЦ НОВОГО КОДА ================== //
+
 function initializeUpgradeButtons() {
     document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
         const cost = Object.keys(upgrades)[index];
         if (boughtUpgrades[cost]) {
-            button.disabled = true; // Блокируем купленные улучшения
+            button.disabled = true;
         } else if (index > 0 && !boughtUpgrades[Object.keys(upgrades)[index - 1]]) {
-            button.disabled = true; // Блокируем улучшения, пока предыдущее не куплено
+            button.disabled = true;
         } else {
-            button.disabled = false; // Разблокируем доступные улучшения
+            button.disabled = false;
         }
     });
 }
 
-// Запускаем начальную инициализацию кнопок
 initializeUpgradeButtons();
 
 clickableImage.addEventListener('click', (event) => {
@@ -95,7 +171,6 @@ function checkForUpgrades() {
     initializeUpgradeButtons();
 }
 
-// Обработчики для кнопок улучшений
 document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
     button.addEventListener('click', () => {
         const cost = Object.keys(upgrades)[index];
@@ -121,7 +196,6 @@ document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
     });
 });
 
-// Открытие и закрытие модального окна магазина
 shopButton.addEventListener('click', () => {
     shopModal.style.display = 'flex';
     updateShopButtons();
@@ -131,29 +205,24 @@ closeShopModal.addEventListener('click', () => {
     shopModal.style.display = 'none';
 });
 
-// Покупка скинов
 document.querySelectorAll('.buy-button').forEach((button) => {
     button.addEventListener('click', () => {
         const cost = parseInt(button.getAttribute('data-cost'));
         const skin = button.getAttribute('data-skin');
 
-        // Проверяем, хватает ли денег и не куплен ли скин ранее
         if (score >= cost && !boughtSkins[skin]) {
-            score -= cost;  // Уменьшаем счет только если хватает денег
-            boughtSkins[skin] = true;  // Отмечаем, что скин куплен
-
+            score -= cost;
+            boughtSkins[skin] = true;
             localStorage.setItem('score', score);
             localStorage.setItem('boughtSkins', JSON.stringify(boughtSkins));
             scoreElement.textContent = score;
-
-            button.textContent = 'ВЫБРАТЬ'; // Меняем текст кнопки после покупки
+            button.textContent = 'ВЫБРАТЬ';
             button.disabled = false;
         } else if (boughtSkins[skin]) {
             selectedSkin = skin;
             clickableImage.src = selectedSkin;
             localStorage.setItem('selectedSkin', selectedSkin);
-
-            updateShopButtons(); // Обновляем кнопки в магазине
+            updateShopButtons();
         } else {
             showError(`Недостаточно чадов. У вас ${score}. Вам нужно ${cost}`);
         }
@@ -168,14 +237,13 @@ function updateShopButtons() {
                 button.textContent = 'ВЫБРАНО';
                 button.classList.add('selected-button');
             } else {
-                button.textContent = 'ВЫБРАНО';
+                button.textContent = 'ВЫБРАТЬ';
                 button.classList.remove('selected-button');
             }
         }
     });
 }
 
-// Промокод
 promoButton.addEventListener('click', () => {
     promoModal.style.display = 'flex';
 });
@@ -194,7 +262,7 @@ activatePromoButton.addEventListener('click', () => {
     } else if (promoCode === 'Пупс') {
         if (!isPromoCodeUsed) {
             localStorage.setItem('promoCodeUsed', 'true');
-promoMessageElement.style.color = 'green'; // Устанавливаем зеленый цвет
+            promoMessageElement.style.color = 'green';
             showPromoMessage('Промокод успешно активирован ждите приз!');
             setTimeout(() => {
                 score += 10000;
@@ -203,7 +271,7 @@ promoMessageElement.style.color = 'green'; // Устанавливаем зел�
                 checkForUpgrades();
             }, 20000);
         } else {
-promoMessageElement.textContent = 'Этот промокод уже был использован';
+            promoMessageElement.textContent = 'Этот промокод уже был использован';
             showPromoMessage(promoMessageElement.textContent);
         }
     } else {
@@ -221,7 +289,6 @@ function showPromoMessage(message) {
     }, 5000);
 }
 
-// Сброс игры
 resetButton.addEventListener('click', () => {
     resetModal.style.display = 'flex';
 });
@@ -249,59 +316,4 @@ confirmResetButton.addEventListener('click', () => {
 
 cancelResetButton.addEventListener('click', () => {
     resetModal.style.display = 'none';
-});
-
-// Проверяем, что это Telegram WebApp
-const isTelegramWebApp = () => {
-    return window.Telegram && window.Telegram.WebApp;
-};
-
-document.querySelectorAll('.buy-stars-button').forEach(button => {
-    button.addEventListener('click', async () => {
-        const chads = parseInt(button.getAttribute('data-chads'));
-        const stars = parseInt(button.getAttribute('data-stars'));
-        
-        if (!isTelegramWebApp()) {
-            alert("Эта функция доступна только в Telegram!");
-            return;
-        }
-
-        try {
-            // Открываем платежное окно Telegram
-            Telegram.WebApp.openInvoice({
-                title: `Покупка ${chads} Чадов`,
-                description: `Получите ${chads} Чадов за ${stars} Telegram Stars`,
-                currency: "USD",
-                prices: [
-                    { label: `${stars} Stars`, amount: stars * 100 } // Цена в центах (100 = 1$)
-                ],
-                payload: JSON.stringify({
-                    userId: Telegram.WebApp.initDataUnsafe.user?.id,
-                    product: `chads_${chads}`
-                }),
-                provider_token: "2051251535:TEST:OTk5MDA4ODgxLTAwNQ/TEST" // Нужно получить у @BotFather
-            }, (status) => {
-                if (status === "paid") {
-                    // Успешная оплата
-                    score += chads;
-                    scoreElement.textContent = score;
-                    localStorage.setItem('score', score);
-                    
-                    // Показываем анимацию
-                    const successMsg = document.createElement('div');
-                    successMsg.className = 'stars-success-animation';
-                    successMsg.textContent = `+${chads} Чадов!`;
-                    document.body.appendChild(successMsg);
-                    setTimeout(() => successMsg.remove(), 2000);
-                    
-                    // Можно отправить данные на сервер для верификации
-                    // sendPaymentConfirmation(Telegram.WebApp.initDataUnsafe.query_id);
-                } else {
-                    showError("Оплата не прошла 😢");
-                }
-            });
-        } catch (error) {
-            showError("Ошибка платежа: " + error.message);
-        }
-    });
 });
