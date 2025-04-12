@@ -278,23 +278,147 @@ body::before {
     -ms-user-select: none; /* Отключает выделение текста в старых версиях IE */
 }
 
-.stars-success-animation {
+/* Реферальная система */
+.referral-button {
+    position: relative;
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    border: none;
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.referral-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.referral-button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 45%,
+        rgba(255, 255, 255, 0.1) 55%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: rotate(30deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) rotate(30deg); }
+    100% { transform: translateX(100%) rotate(30deg); }
+}
+
+.referral-modal {
+    display: none;
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 24px;
-    font-weight: bold;
-    color: #00ff00;
-    background: rgba(0, 0, 0, 0.7);
-    padding: 15px 25px;
-    border-radius: 10px;
-    animation: starsPulse 1.5s ease-out;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
     z-index: 1000;
 }
 
-@keyframes starsPulse {
-    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
-    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
-    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+.referral-modal-content {
+    background: linear-gradient(135deg, #1e2a78, #ff758c);
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    color: white;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.5s;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.close-referral {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.close-referral:hover {
+    color: #ffcc00;
+    transform: rotate(90deg);
+}
+
+.referral-info {
+    margin: 20px 0;
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+.highlight {
+    background-color: rgba(255, 215, 0, 0.2);
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.referral-link-container {
+    display: flex;
+    margin: 25px 0;
+}
+
+#referral-link {
+    flex-grow: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 5px 0 0 5px;
+    font-size: 14px;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.copy-button {
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    border: none;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 0 5px 5px 0;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+
+.copy-button:hover {
+    background: linear-gradient(to right, #3a7bd5, #00d2ff);
+    transform: translateX(2px);
+}
+
+.referral-stats {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 16px;
+}
+
+.referral-stats span {
+    font-weight: bold;
+    color: #ffcc00;
 }
