@@ -306,4 +306,4 @@ function checkReferral() {
 }
 
 // Вызовите при загрузке страницы
-checkReferral();
+document.addEventListener('DOMContentLoaded', checkReferral);
