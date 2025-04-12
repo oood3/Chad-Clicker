@@ -305,5 +305,25 @@ function checkReferralFromURL() {
     }
 }
 
-// Проверяем реферальную ссылку при загрузке
-checkReferralFromURL();
+// Проверка реферального параметра из Telegram
+function checkTelegramReferral() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tgRef = urlParams.get('tg_ref');
+    const amount = urlParams.get('amount');
+    
+    if (tgRef && amount && !localStorage.getItem(`tg_ref_${tgRef}_processed`)) {
+        // Начисляем бонус
+        score += parseInt(amount);
+        scoreElement.textContent = score;
+        localStorage.setItem('score', score);
+        localStorage.setItem(`tg_ref_${tgRef}_processed`, 'true');
+        
+        showError(`🎉 Вы получили ${amount} Чадов из Telegram!`);
+    }
+}
+
+// Добавьте этот вызов в начало вашего game.js
+document.addEventListener('DOMContentLoaded', () => {
+    checkTelegramReferral();
+    // остальная инициализация...
+});
