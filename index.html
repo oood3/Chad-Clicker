@@ -29,7 +29,8 @@
         <button id="promo-button">ПРОМОКОДЫ</button>
         <button id="reset-button" class="reset-button">СБРОС ИГРЫ</button>
         <button id="shop-button" class="shop-button">МАГАЗИН</button>
-</div>
+        <button id="referral-button" class="referral-button">РЕФ. СИСТЕМА</button>
+    </div>
 
     <!-- Модальное окно магазина -->
     <div id="shop-modal" class="shop-modal">
@@ -54,9 +55,10 @@
                 <p>Цена: 100,000,000,000 Чадов</p>
                 <button class="buy-button" data-cost="100000000000" data-skin="skin3.png">КУПИТЬ</button>
             </div>
-    	</div>
+        </div>
     </div>
 
+    <!-- Модальное окно промокодов -->
     <div id="promo-modal" class="promo-modal">
         <div class="promo-modal-content">
             <span class="close">&times;</span>
@@ -66,6 +68,8 @@
             <div id="promo-message" class="promo-message"></div>
         </div>
     </div>
+
+    <!-- Модальное окно сброса -->
     <div id="reset-modal" class="reset-modal">
         <div class="reset-modal-content">
             <span class="close-reset">&times;</span>
@@ -76,8 +80,28 @@
         </div>
     </div>
 
+    <!-- Модальное окно реферальной системы -->
+    <div id="referral-modal" class="referral-modal">
+        <div class="referral-modal-content">
+            <span class="close-referral">&times;</span>
+            <h2>Реферальная система</h2>
+            <div class="referral-info">
+                <p>🎉 За каждого приглашенного друга:</p>
+                <p>💎 <span class="highlight">Ты получаешь 19,500 Чадов</span></p>
+                <p>✨ <span class="highlight">Приглашенный получает 5,000 Чадов</span> при старте!</p>
+            </div>
+            <div class="referral-link-container">
+                <input type="text" id="referral-link" readonly>
+                <button id="copy-referral" class="copy-button">Копировать</button>
+            </div>
+            <div class="referral-stats">
+                <p>👥 Приглашено друзей: <span id="referral-count">0</span></p>
+                <p>💰 Получено Чадов: <span id="referral-earned">0</span></p>
+            </div>
+        </div>
+    </div>
+
     <div id="error-message" class="error-message"></div>
     <script src="game.js"></script>
-
 </body>
 </html>
