@@ -56,16 +56,17 @@ const closeShopModal = document.querySelector('.shop-modal-content .close-shop')
 const referralButton = document.getElementById('referral-button');
 const referralModal = document.getElementById('referral-modal');
 const closeReferral = document.querySelector('.referral-modal-content .close-referral');
-const referralLink = document.getElementById('referral-link');
-const copyButton = document.getElementById('copy-referral');
 const referralCountElement = document.getElementById('referral-count');
 const referralEarnedElement = document.getElementById('referral-earned');
+const telegramLink = document.getElementById('telegram-link');
 
 // Инициализация
 scoreElement.textContent = score;
 initializeUpgradeButtons();
-checkReferral();
 updateReferralStats();
+
+// Установка Telegram ссылки
+telegramLink.href = `https://t.me/YOUR_BOT_NAME?start=ref_${userId}`;
 
 function initializeUpgradeButtons() {
     document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
@@ -263,40 +264,17 @@ cancelResetButton.addEventListener('click', () => {
 });
 
 // Реферальные функции
-function checkReferral() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get('ref');
-    
-    if (ref && ref !== userId && !localStorage.getItem('ref_used')) {
-        score += 5000;
-        scoreElement.textContent = score;
-        localStorage.setItem('score', score);
-        localStorage.setItem('ref_used', ref);
-        
-        // В реальном приложении здесь должен быть запрос к серверу
-        const referrals = JSON.parse(localStorage.getItem('referrals') || '[]');
-        referrals.push({ referrer: ref, date: new Date().toISOString() });
-        localStorage.setItem('referrals', JSON.stringify(referrals));
-        
-        showError(`🎉 Вы получили 5000 Чадов за регистрацию по реферальной ссылке!`);
-    }
-}
-
 function updateReferralStats() {
-    const referrals = JSON.parse(localStorage.getItem('referrals') || '[]');
-    referralCount = referrals.length;
+    // В реальном приложении здесь должен быть запрос к серверу
+    // Для демо используем localStorage
+    referralCount = localStorage.getItem('referralCount') || 0;
     referralEarned = referralCount * 19500;
-    
-    localStorage.setItem('referralCount', referralCount);
-    localStorage.setItem('referralEarned', referralEarned);
     
     referralCountElement.textContent = referralCount;
     referralEarnedElement.textContent = referralEarned;
 }
 
 // Инициализация реферальной системы
-referralLink.value = `${window.location.origin}${window.location.pathname}?ref=${userId}`;
-
 referralButton.addEventListener('click', () => {
     referralModal.style.display = 'flex';
 });
@@ -305,12 +283,27 @@ closeReferral.addEventListener('click', () => {
     referralModal.style.display = 'none';
 });
 
-copyButton.addEventListener('click', () => {
-    referralLink.select();
-    document.execCommand('copy');
-    
-    copyButton.textContent = 'Скопировано!';
-    setTimeout(() => {
-        copyButton.textContent = 'Копировать';
-    }, 2000);
+window.addEventListener('click', (event) => {
+    if (event.target === referralModal) {
+        referralModal.style.display = 'none';
+    }
 });
+
+// Проверка реферального параметра при загрузке
+function checkReferralFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    
+    if (ref && ref !== userId && !localStorage.getItem('ref_used')) {
+        // В реальном приложении здесь должен быть запрос к серверу
+        score += 5000;
+        scoreElement.textContent = score;
+        localStorage.setItem('score', score);
+        localStorage.setItem('ref_used', ref);
+        
+        showError(`🎉 Вы получили 5000 Чадов за регистрацию по реферальной ссылке!`);
+    }
+}
+
+// Проверяем реферальную ссылку при загрузке
+checkReferralFromURL();
