@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Кликер Чадов</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Чады: <span id="score">0</span></h1>
+        <div id="clicker">
+            <img id="clickable-image" src="your-image.png" alt="Кликни меня">
+        </div>
+        <div id="upgrade-info">
+            <button id="upgrade-1">Улучшение 1 - 9000 Чадов</button>
+            <button id="upgrade-2">Улучшение 2 - 50000 Чадов</button>
+            <button id="upgrade-3">Улучшение 3 - 100000 Чадов</button>
+            <button id="upgrade-4">Улучшение 4 - 250000 Чадов</button>
+            <button id="upgrade-5">Улучшение 5 - 400000 Чадов</button>
+            <button id="upgrade-6">Улучшение 6 - 1000000 Чадов</button>
+            <button id="upgrade-7">Улучшение 7 - 1500000 Чадов</button>
+            <button id="upgrade-8">Улучшение 8 - 3000000 Чадов</button>
+            <button id="upgrade-9">Улучшение 9 - 4000000 Чадов</button>
+            <button id="upgrade-10">Улучшение 10 - 5000000 Чадов</button>
+            <button id="upgrade-11">Улучшение 11 - 7777777 Чадов</button>
+            <button id="upgrade-12">Улучшение 12 - 1000000000 Чадов</button>
+        </div>
+        <button id="promo-button">ПРОМОКОДЫ</button>
+        <button id="reset-button" class="reset-button">СБРОС ИГРЫ</button>
+        <button id="shop-button" class="shop-button">МАГАЗИН</button>
+</div>
+
+    <!-- Модальное окно магазина -->
+    <div id="shop-modal" class="shop-modal">
+        <div class="shop-modal-content">
+            <span class="close-shop">&times;</span>
+            <h2>МАГАЗИН</h2>
+            <div class="shop-item">
+                <img class="shop-image" src="skin1.png" alt="Skin 1">
+                <p style="font-weight: bold;">ВысрЧад</p>
+                <p>Цена: 10,000,000 Чадов</p>
+                <button class="buy-button" data-cost="10000000" data-skin="skin1.png">КУПИТЬ</button>
+            </div>
+            <div class="shop-item">
+                <img class="shop-image" src="skin2.png" alt="Skin 2">
+                <p style="font-weight: bold;">УкраЧад</p>
+                <p>Цена: 100,000,000 Чадов</p>
+                <button class="buy-button" data-cost="100000000" data-skin="skin2.png">КУПИТЬ</button>
+            </div>
+            <div class="shop-item">
+                <img class="shop-image" src="skin3.png" alt="Skin 3">
+                <p style="font-weight: bold;">ПраймЧад</p>
+                <p>Цена: 100,000,000,000 Чадов</p>
+                <button class="buy-button" data-cost="100000000000" data-skin="skin3.png">КУПИТЬ</button>
+            </div>
+<!-- Добавьте этот блок перед закрывающим </div> в shop-modal-content -->
+<div class="shop-item">
+    <h3>Купить Чады за Telegram Stars</h3>
+    <div class="stars-item">
+        <p>20,000 Чадов</p>
+        <p>Цена: 5 Stars</p>
+        <button class="buy-stars-button" data-chads="20000" data-stars="5">Купить за 5★</button>
+    </div>
+    <div class="stars-item">
+        <p>50,000 Чадов</p>
+        <p>Цена: 15 Stars</p>
+        <button class="buy-stars-button" data-chads="50000" data-stars="15">Купить за 15★</button>
+    </div>
+    <div class="stars-item">
+        <p>100,000 Чадов</p>
+        <p>Цена: 20 Stars</p>
+        <button class="buy-stars-button" data-chads="100000" data-stars="20">Купить за 20★</button>
+    </div>
+    <div class="stars-item">
+        <p>249,999 Чадов</p>
+        <p>Цена: 45 Stars</p>
+        <button class="buy-stars-button" data-chads="249999" data-stars="45">Купить за 45★</button>
+    </div>
+</div>
+
+    <div id="promo-modal" class="promo-modal">
+        <div class="promo-modal-content">
+            <span class="close">&times;</span>
+            <h2>Введите промокод</h2>
+            <input type="text" id="promo-code" placeholder="Введите промокод">
+            <button id="activate-promo">Активировать</button>
+            <div id="promo-message" class="promo-message"></div>
+        </div>
+    </div>
+    <div id="reset-modal" class="reset-modal">
+        <div class="reset-modal-content">
+            <span class="close-reset">&times;</span>
+            <h2>Подтверждение сброса</h2>
+            <p>Если вы нажмете кнопку «Да, сбросить», ваш аккаунт будет полностью сброшен: вся валюта, скины, улучшения будут сброшены!</p>
+            <button id="confirm-reset">Да, сбросить</button>
+            <button id="cancel-reset">Отмена</button>
+        </div>
+    </div>
+
+    <div id="error-message" class="error-message"></div>
+    <script src="game.js"></script>
+
+</body>
+</html>

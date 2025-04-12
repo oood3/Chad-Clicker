@@ -1,0 +1,300 @@
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+    background-image: url('hand-holding-money-through-hole-yellow-paper-wall-vertical-image_253401-7181.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    height: auto; /* Установите авто, чтобы высота адаптировалась к содержимому */
+    margin: 0;
+    /* overflow: hidden; Уберите или закомментируйте эту строку */
+}
+
+.container {
+    margin-top: 50px;
+}
+
+#clicker {
+    margin: 20px;
+}
+
+#clickable-image {
+    width: 200px;
+    cursor: pointer;
+    transition: transform 0.05s ease; /* Более быстрая анимация */
+}
+
+#clickable-image:active {
+    transform: scale(0.9); /* Лёгкое уменьшение для эффекта нажатия */
+}
+
+#upgrade-info {
+    margin-top: 20px;
+}
+
+button {
+    margin: 5px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Убираем влияние анимации на клики */
+.upgrade-animation {
+    position: absolute;
+    font-size: 24px;
+    color: green;
+    animation: fadeInUp 1s;
+    pointer-events: none; /* Это позволяет кликам проходить сквозь анимацию */
+}
+
+/* Эффект нажатия на кликер */
+#clickable-image {
+    width: 200px;
+    cursor: pointer;
+    transition: transform 0.05s ease;
+}
+
+#clickable-image:active {
+    transform: scale(0.9); /* Уменьшение изображения при клике */
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-message {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    display: none;
+    animation: shake 0.5s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+}
+
+.promo-modal, .reset-modal, .shop-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
+
+.promo-modal-content, .reset-modal-content, .shop-modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.promo-modal-content .close, .reset-modal-content .close-reset, .shop-modal-content .close-shop {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.promo-message {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #f44336;
+}
+
+.reset-button {
+    background-color: black;
+    border: 2px solid red;
+    color: white;
+    margin-top: 20px;
+}
+
+.shop-button {
+    position: relative;
+    background: linear-gradient(to right, orange, green);
+    border: none;
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.shop-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;  /* Центрируем по вертикали */
+    left: -50px;  /* Начальная позиция луча */
+    width: 10px;  /* Узкая ширина луча */
+    height: 250%; /* Высота больше кнопки */
+    background: rgba(255, 255, 255, 0.5); /* Белый полупрозрачный луч */
+    filter: blur(4px); /* Размытие для мягкости */
+    transform: translateY(-50%) rotate(30deg); /* Центрирование и поворот на 30 градусов */
+    animation: shine 2s infinite; /* Анимация движения */
+}
+
+@keyframes shine {
+    0% {
+        left: -50px; /* Начало вне кнопки */
+    }
+    100% {
+        left: 100%;  /* Конец за кнопкой */
+    }
+}
+
+.shop-button:hover {
+    opacity: 0.8;
+}
+
+.buy-button {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 5px 0;
+    width: 100%;
+}
+
+.buy-button:hover {
+    opacity: 0.8;
+}
+
+.shop-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.shop-item {
+    margin: 10px 0;
+}
+
+.selected-button {
+    background-color: orange !important;
+    color: white;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    position: relative; /* Позволяет использовать абсолютное позиционирование для псевдоэлемента */
+}
+
+body::before {
+    content: '';
+    position: fixed; /* Фиксирует фон */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('hand-holding-money-through-hole-yellow-paper-wall-vertical-image_253401-7181.png');
+    background-size: cover;
+    background-position: center;
+    z-index: -1; /* Устанавливаем фоновый слой ниже остальных */
+}
+
+.container {
+    /* Оберните ваш контент в этот класс, чтобы установить его стиль */
+    padding: 20px; /* Добавьте отступы для вашего контента */
+}
+
+#animation {
+    position: absolute; /* Убедитесь, что элемент позиционируется абсолютно */
+    width: 50px; /* Ширина анимации */
+    height: 50px; /* Высота анимации */
+    background-color: red; /* Цвет анимации */
+    border-radius: 50%; /* Закругленные края */
+    pointer-events: none; /* Отключаем события мыши для анимации */
+}
+
+.animate {
+    animation: scaleUp 1s forwards; /* Пример анимации */
+}
+
+@keyframes scaleUp {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0; /* Исчезает после увеличения */
+    }
+}
+
+/* Анимация увеличения для кнопок при входе в магазин */
+@keyframes grow {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.shop-modal-content .buy-button {
+    animation: grow 0.5s ease;
+}
+
+* {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+* {
+    user-select: none; /* Отключает выделение текста */
+    -webkit-user-select: none; /* Отключает выделение текста в Safari */
+    -ms-user-select: none; /* Отключает выделение текста в старых версиях IE */
+}
+
+.stars-success-animation {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    font-weight: bold;
+    color: #00ff00;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 15px 25px;
+    border-radius: 10px;
+    animation: starsPulse 1.5s ease-out;
+    z-index: 1000;
+}
+
+@keyframes starsPulse {
+    0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+    50% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
