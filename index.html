@@ -32,7 +32,6 @@
         <button id="referral-button" class="referral-button">РЕФ. СИСТЕМА</button>
     </div>
 
-    <!-- Модальное окно магазина -->
     <div id="shop-modal" class="shop-modal">
         <div class="shop-modal-content">
             <span class="close-shop">&times;</span>
@@ -58,7 +57,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно промокодов -->
     <div id="promo-modal" class="promo-modal">
         <div class="promo-modal-content">
             <span class="close">&times;</span>
@@ -69,7 +67,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно сброса -->
     <div id="reset-modal" class="reset-modal">
         <div class="reset-modal-content">
             <span class="close-reset">&times;</span>
@@ -80,19 +77,20 @@
         </div>
     </div>
 
-    <!-- Модальное окно реферальной системы -->
     <div id="referral-modal" class="referral-modal">
         <div class="referral-modal-content">
             <span class="close-referral">&times;</span>
-            <h2>Реферальная система</h2>
+            <h2>Telegram Реферальная система</h2>
             <div class="referral-info">
-                <p>🎉 За каждого приглашенного друга:</p>
-                <p>💎 <span class="highlight">Ты получаешь 19,500 Чадов</span></p>
-                <p>✨ <span class="highlight">Приглашенный получает 5,000 Чадов</span> при старте!</p>
+                <p>🎉 Приглашай друзей через Telegram бота:</p>
+                <p>💎 <span class="highlight">Ты получишь 19,500 Чадов</span></p>
+                <p>✨ <span class="highlight">Друг получит 5,000 Чадов</span> при старте!</p>
             </div>
-            <div class="referral-link-container">
-                <input type="text" id="referral-link" readonly>
-                <button id="copy-referral" class="copy-button">Копировать</button>
+            <div class="telegram-widget">
+                <a href="https://t.me/YOUR_BOT_NAME?start=ref_{userId}" id="telegram-link" target="_blank" class="telegram-button">
+                    <img src="telegram-icon.png" alt="Telegram" class="telegram-icon">
+                    <span>Пригласить через Telegram</span>
+                </a>
             </div>
             <div class="referral-stats">
                 <p>👥 Приглашено друзей: <span id="referral-count">0</span></p>
