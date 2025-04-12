@@ -316,3 +316,82 @@ confirmResetButton.addEventListener('click', () => {
 cancelResetButton.addEventListener('click', () => {
     resetModal.style.display = 'none';
 });
+
+// Реферальная система
+let referralCount = localStorage.getItem('referralCount') ? parseInt(localStorage.getItem('referralCount')) : 0;
+let referralEarned = localStorage.getItem('referralEarned') ? parseInt(localStorage.getItem('referralEarned')) : 0;
+const userId = localStorage.getItem('userId') || generateUserId();
+
+function generateUserId() {
+    const id = 'user_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('userId', id);
+    return id;
+}
+
+// Проверка реферального параметра в URL
+function checkReferral() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    
+    if (ref && ref !== userId && !localStorage.getItem('ref_used')) {
+        // Новый пользователь по реферальной ссылке
+        score += 5000;
+        scoreElement.textContent = score;
+        localStorage.setItem('score', score);
+        localStorage.setItem('ref_used', ref);
+        
+        // Здесь должна быть отправка на сервер о новом реферале
+        // В демо-версии просто сохраняем в localStorage
+        const referrals = JSON.parse(localStorage.getItem('referrals') || '[]');
+        referrals.push({ referrer: ref, date: new Date().toISOString() });
+        localStorage.setItem('referrals', JSON.stringify(referrals));
+    }
+}
+
+// Инициализация реферальной системы
+document.addEventListener('DOMContentLoaded', () => {
+    checkReferral();
+    
+    const referralButton = document.getElementById('referral-button');
+    const referralModal = document.getElementById('referral-modal');
+    const closeReferral = document.querySelector('.close-referral');
+    const referralLink = document.getElementById('referral-link');
+    const copyButton = document.getElementById('copy-referral');
+    const referralCountElement = document.getElementById('referral-count');
+    const referralEarnedElement = document.getElementById('referral-earned');
+    
+    // Обновляем статистику
+    referralCountElement.textContent = referralCount;
+    referralEarnedElement.textContent = referralEarned;
+    
+    // Генерируем реферальную ссылку
+    referralLink.value = `${window.location.origin}${window.location.pathname}?ref=${userId}`;
+    
+    // Открытие/закрытие модального окна
+    referralButton.addEventListener('click', () => {
+        referralModal.style.display = 'flex';
+    });
+    
+    closeReferral.addEventListener('click', () => {
+        referralModal.style.display = 'none';
+    });
+    
+    // Копирование ссылки
+    copyButton.addEventListener('click', () => {
+        referralLink.select();
+        document.execCommand('copy');
+        
+        // Анимация успешного копирования
+        copyButton.textContent = 'Скопировано!';
+        setTimeout(() => {
+            copyButton.textContent = 'Копировать';
+        }, 2000);
+    });
+    
+    // Закрытие при клике вне модального окна
+    window.addEventListener('click', (event) => {
+        if (event.target === referralModal) {
+            referralModal.style.display = 'none';
+        }
+    });
+});
