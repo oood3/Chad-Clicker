@@ -191,7 +191,6 @@ button {
     color: white;
 }
 
-/* Реферальная система */
 .referral-button {
     position: relative;
     background: linear-gradient(135deg, #6e8efb, #a777e3);
@@ -261,34 +260,33 @@ button {
     font-weight: bold;
 }
 
-.referral-link-container {
-    display: flex;
+.telegram-widget {
     margin: 25px 0;
 }
 
-#referral-link {
-    flex-grow: 1;
-    padding: 12px;
-    border: none;
-    border-radius: 5px 0 0 5px;
-    font-size: 14px;
-    background-color: rgba(255, 255, 255, 0.9);
-}
-
-.copy-button {
-    background: linear-gradient(to right, #4facfe, #00f2fe);
-    border: none;
+.telegram-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0088cc;
     color: white;
     padding: 12px 20px;
-    border-radius: 0 5px 5px 0;
-    cursor: pointer;
+    border-radius: 5px;
+    text-decoration: none;
     font-weight: bold;
     transition: all 0.3s;
 }
 
-.copy-button:hover {
-    background: linear-gradient(to right, #3a7bd5, #00d2ff);
-    transform: translateX(2px);
+.telegram-button:hover {
+    background-color: #0077b5;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.telegram-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
 }
 
 .referral-stats {
