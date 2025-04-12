@@ -289,41 +289,22 @@ window.addEventListener('click', (event) => {
     }
 });
 
-// Проверка реферального параметра при загрузке
-function checkReferralFromURL() {
+// Проверка реферального параметра из URL
+function checkReferral() {
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
     
-    if (ref && ref !== userId && !localStorage.getItem('ref_used')) {
-        // В реальном приложении здесь должен быть запрос к серверу
+    if (ref && !localStorage.getItem('ref_processed')) {
+        // Начисляем бонус
         score += 5000;
         scoreElement.textContent = score;
         localStorage.setItem('score', score);
-        localStorage.setItem('ref_used', ref);
+        localStorage.setItem('ref_processed', 'true');
         
-        showError(`🎉 Вы получили 5000 Чадов за регистрацию по реферальной ссылке!`);
+        showError("🎉 Вы получили 5000 Чадов за регистрацию по реферальной ссылке!");
     }
 }
 
-// Проверка реферального параметра из Telegram
-function checkTelegramReferral() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const tgRef = urlParams.get('tg_ref');
-    const amount = urlParams.get('amount');
-    
-    if (tgRef && amount && !localStorage.getItem(`tg_ref_${tgRef}_processed`)) {
-        // Начисляем бонус
-        score += parseInt(amount);
-        scoreElement.textContent = score;
-        localStorage.setItem('score', score);
-        localStorage.setItem(`tg_ref_${tgRef}_processed`, 'true');
-        
-        showError(`🎉 Вы получили ${amount} Чадов из Telegram!`);
-    }
-}
+// Вызовите эту функцию при загрузке страницы
+checkReferral();
 
-// Добавьте этот вызов в начало вашего game.js
-document.addEventListener('DOMContentLoaded', () => {
-    checkTelegramReferral();
-    // остальная инициализация...
-});
