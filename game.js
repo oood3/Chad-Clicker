@@ -96,7 +96,7 @@ document.querySelectorAll('.buy-stars-button').forEach(button => {
                     userId: Telegram.WebApp.initDataUnsafe.user?.id,
                     product: `chads_${chads}`
                 }),
-                provider_token: "YOUR_PROVIDER_TOKEN" // Замените на реальный токен!
+                provider_token: "2051251535:TEST:OTk5MDA4ODgxLTAwNQ" // Замените на реальный токен!
             }, (status) => {
                 if (status === "paid") {
                     score += chads;
