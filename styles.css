@@ -2,309 +2,234 @@ body {
     font-family: Arial, sans-serif;
     text-align: center;
     background-color: #f0f0f0;
-    background-image: url('hand-holding-money-through-hole-yellow-paper-wall-vertical-image_253401-7181.png');
+    background-image: url('bg-image.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    background-repeat: no-repeat;
-    height: auto;
     margin: 0;
+    padding: 0;
 }
 
 .container {
-    margin-top: 50px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
 }
 
 #clicker {
-    margin: 20px;
+    margin: 20px 0;
 }
 
 #clickable-image {
     width: 200px;
     cursor: pointer;
-    transition: transform 0.05s ease;
+    transition: transform 0.1s;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 #clickable-image:active {
-    transform: scale(0.9);
+    transform: scale(0.95);
 }
 
 #upgrade-info {
-    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 10px;
+    margin: 20px 0;
 }
 
-button {
-    margin: 5px;
+#upgrade-info button {
     padding: 10px;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.upgrade-animation {
-    position: absolute;
-    font-size: 24px;
-    color: green;
-    animation: fadeInUp 1s;
-    pointer-events: none;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.error-message {
-    position: fixed;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #f44336;
-    color: #ffffff;
-    padding: 15px;
+    background: linear-gradient(135deg, #6e8efb, #a777e3);
+    color: white;
+    border: none;
     border-radius: 5px;
-    display: none;
-    animation: shake 0.5s;
+    cursor: pointer;
+    transition: all 0.3s;
 }
 
-@keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    50% { transform: translateX(10px); }
-    75% { transform: translateX(-10px); }
-    100% { transform: translateX(0); }
+#upgrade-info button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.promo-modal, .reset-modal, .shop-modal, .referral-modal {
+#upgrade-info button:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+}
+
+.modal {
     display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
 }
 
-.promo-modal-content, .reset-modal-content, .shop-modal-content, .referral-modal-content {
-    background: #fff;
+.modal-content {
+    background-color: #fff;
     padding: 20px;
-    border-radius: 5px;
-    width: 300px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
     max-height: 80vh;
     overflow-y: auto;
     position: relative;
 }
 
-.promo-modal-content .close, 
-.reset-modal-content .close-reset, 
-.shop-modal-content .close-shop,
-.referral-modal-content .close-referral {
+.close {
     position: absolute;
     top: 10px;
-    right: 10px;
-    font-size: 20px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
     cursor: pointer;
-}
-
-.promo-message {
-    margin-top: 10px;
-    font-size: 16px;
-    color: #f44336;
-}
-
-.reset-button {
-    background-color: black;
-    border: 2px solid red;
-    color: white;
-    margin-top: 20px;
-}
-
-.shop-button {
-    position: relative;
-    background: linear-gradient(to right, orange, green);
-    border: none;
-    color: white;
-    font-size: 18px;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin-top: 20px;
-    overflow: hidden;
-}
-
-.shop-button::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -50px;
-    width: 10px;
-    height: 250%;
-    background: rgba(255, 255, 255, 0.5);
-    filter: blur(4px);
-    transform: translateY(-50%) rotate(30deg);
-    animation: shine 2s infinite;
-}
-
-@keyframes shine {
-    0% { left: -50px; }
-    100% { left: 100%; }
-}
-
-.shop-button:hover {
-    opacity: 0.8;
-}
-
-.buy-button {
-    background-color: green;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    margin: 5px 0;
-    width: 100%;
-}
-
-.buy-button:hover {
-    opacity: 0.8;
-}
-
-.shop-image {
-    width: 100%;
-    height: auto;
-    margin-bottom: 10px;
 }
 
 .shop-item {
-    margin: 10px 0;
+    margin: 15px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
 }
 
-.selected-button {
-    background-color: orange !important;
+.buy-button {
+    background-color: #4CAF50;
     color: white;
-}
-
-.referral-button {
-    position: relative;
-    background: linear-gradient(135deg, #6e8efb, #a777e3);
     border: none;
-    color: white;
-    font-size: 18px;
     padding: 10px 20px;
+    border-radius: 5px;
     cursor: pointer;
-    margin-top: 20px;
-    border-radius: 50px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    overflow: hidden;
+    transition: all 0.3s;
 }
 
-.referral-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+.buy-button:hover {
+    background-color: #45a049;
 }
 
-.referral-button::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-        to bottom right,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.1) 45%,
-        rgba(255, 255, 255, 0.1) 55%,
-        rgba(255, 255, 255, 0) 100%
-    );
-    transform: rotate(30deg);
-    animation: shine 3s infinite;
-}
-
-.referral-modal-content {
-    background: linear-gradient(135deg, #1e2a78, #ff758c);
-    padding: 30px;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 500px;
-    color: white;
-    text-align: center;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    animation: modalFadeIn 0.5s;
-}
-
-@keyframes modalFadeIn {
-    from { opacity: 0; transform: translateY(-50px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.referral-info {
+#telegram-widget {
     margin: 20px 0;
-    font-size: 18px;
-    line-height: 1.6;
+    text-align: center;
+}
+
+#open-telegram {
+    background-color: #0088cc;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+}
+
+#open-telegram:hover {
+    background-color: #006699;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+#referral-section {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+}
+
+#referral-link {
+    padding: 10px;
+    width: 200px;
+    border: 1px solid #ddd;
+    border-radius: 4px 0 0 4px;
+}
+
+#copy-referral {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#copy-referral:hover {
+    background-color: #45a049;
+}
+
+.error-message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    z-index: 1000;
+    animation: fadeInOut 3s forwards;
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; top: 0; }
+    10% { opacity: 1; top: 20px; }
+    90% { opacity: 1; top: 20px; }
+    100% { opacity: 0; top: 0; }
 }
 
 .highlight {
     background-color: rgba(255, 215, 0, 0.2);
     padding: 2px 8px;
     border-radius: 5px;
-    font-weight: bold;
-}
-
-.telegram-widget {
-    margin: 25px 0;
-}
-
-.telegram-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #0088cc;
-    color: white;
-    padding: 12px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: all 0.3s;
-}
-
-.telegram-button:hover {
-    background-color: #0077b5;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.telegram-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 10px;
 }
 
 .referral-stats {
-    margin-top: 25px;
+    margin-top: 20px;
     padding-top: 15px;
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    border-top: 1px solid #eee;
+}
+
+.reset-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.shop-button {
+    background: linear-gradient(135deg, #ff9800, #ff5722);
+    color: white;
+}
+
+.referral-button {
+    background: linear-gradient(135deg, #9c27b0, #673ab7);
+    color: white;
+}
+
+.promo-button {
+    background: linear-gradient(135deg, #2196F3, #03A9F4);
+    color: white;
+}
+
+button {
+    margin: 5px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
     font-size: 16px;
+    transition: all 0.3s;
 }
 
-.referral-stats span {
-    font-weight: bold;
-    color: #ffcc00;
-}
-
-* {
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
+button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
 }
