@@ -1,9 +1,6 @@
-// Инициализация переменных
 let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
 let clickPower = localStorage.getItem('clickPower') ? parseInt(localStorage.getItem('clickPower')) : 1;
 let currentSkin = localStorage.getItem('currentSkin') || 'your-image.png';
-let userId = new URLSearchParams(window.location.search).get('user_id');
-let refBonusReceived = localStorage.getItem('refBonusReceived') === 'true';
 
 const upgrades = {
     9000: 3,
@@ -20,11 +17,11 @@ const upgrades = {
     1000000000: 2999
 };
 
+// Получаем состояние улучшений и скинов из localStorage
 const boughtUpgrades = JSON.parse(localStorage.getItem('boughtUpgrades')) || {};
 const boughtSkins = JSON.parse(localStorage.getItem('boughtSkins')) || {};
 let selectedSkin = localStorage.getItem('selectedSkin') || currentSkin;
 
-// Элементы DOM
 const scoreElement = document.getElementById('score');
 const clickableImage = document.getElementById('clickable-image');
 clickableImage.src = selectedSkin;
@@ -41,65 +38,38 @@ const resetModal = document.getElementById('reset-modal');
 const closeResetModal = document.querySelector('.reset-modal-content .close-reset');
 const confirmResetButton = document.getElementById('confirm-reset');
 const cancelResetButton = document.getElementById('cancel-reset');
+
+// Для магазина
 const shopButton = document.getElementById('shop-button');
 const shopModal = document.getElementById('shop-modal');
 const closeShopModal = document.querySelector('.shop-modal-content .close-shop');
-const syncButton = document.getElementById('sync-button');
 
-// Проверка реферальной ссылки
-function checkReferral() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const refParam = urlParams.get('ref');
-    
-    if (refParam && !refBonusReceived) {
-        score += 3000;
-        scoreElement.textContent = score;
-        localStorage.setItem('score', score);
-        refBonusReceived = true;
-        localStorage.setItem('refBonusReceived', 'true');
-        showError("🎉 Вы получили 3,000 Чадов за реферальную регистрацию!");
-        notifyReferrerBonus(refParam);
-    }
+// Устанавливаем начальные значения
+scoreElement.textContent = score;
+
+function initializeUpgradeButtons() {
+    document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
+        const cost = Object.keys(upgrades)[index];
+        if (boughtUpgrades[cost]) {
+            button.disabled = true; // Блокируем купленные улучшения
+        } else if (index > 0 && !boughtUpgrades[Object.keys(upgrades)[index - 1]]) {
+            button.disabled = true; // Блокируем улучшения, пока предыдущее не куплено
+        } else {
+            button.disabled = false; // Разблокируем доступные улучшения
+        }
+    });
 }
 
-// Уведомление бота о реферале
-function notifyReferrerBonus(referrerId) {
-    if (window.Telegram && Telegram.WebApp) {
-        Telegram.WebApp.sendData(JSON.stringify({
-            action: "referral_bonus",
-            referrerId: referrerId,
-            bonusAmount: 3000
-        }));
-    }
-}
+// Запускаем начальную инициализацию кнопок
+initializeUpgradeButtons();
 
-// Синхронизация с ботом
-function syncWithBot() {
-    if (window.Telegram && Telegram.WebApp) {
-        const data = {
-            action: "sync_data",
-            score: score,
-            clickPower: clickPower,
-            skin: selectedSkin,
-            upgrades: boughtUpgrades
-        };
-        Telegram.WebApp.sendData(JSON.stringify(data));
-        showError("Данные синхронизированы с ботом!");
-    } else {
-        showError("Откройте игру через Telegram бота для синхронизации");
-    }
-}
-
-// Обработчик клика по изображению
 clickableImage.addEventListener('click', (event) => {
     score += clickPower;
     scoreElement.textContent = score;
     localStorage.setItem('score', score);
     showUpgradeAnimation(event);
-    syncWithBot();
 });
 
-// Анимация клика
 function showUpgradeAnimation(event) {
     const upgradeAnimation = document.createElement('div');
     upgradeAnimation.className = 'upgrade-animation';
@@ -113,7 +83,6 @@ function showUpgradeAnimation(event) {
     }, 1000);
 }
 
-// Показ ошибок
 function showError(message) {
     errorMessageElement.textContent = message;
     errorMessageElement.style.display = 'block';
@@ -122,21 +91,11 @@ function showError(message) {
     }, 5000);
 }
 
-// Инициализация кнопок улучшений
-function initializeUpgradeButtons() {
-    document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
-        const cost = Object.keys(upgrades)[index];
-        if (boughtUpgrades[cost]) {
-            button.disabled = true;
-        } else if (index > 0 && !boughtUpgrades[Object.keys(upgrades)[index - 1]]) {
-            button.disabled = true;
-        } else {
-            button.disabled = false;
-        }
-    });
+function checkForUpgrades() {
+    initializeUpgradeButtons();
 }
 
-// Обработчики улучшений
+// Обработчики для кнопок улучшений
 document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
     button.addEventListener('click', () => {
         const cost = Object.keys(upgrades)[index];
@@ -148,55 +107,75 @@ document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
             localStorage.setItem('clickPower', clickPower);
             localStorage.setItem('boughtUpgrades', JSON.stringify(boughtUpgrades));
             scoreElement.textContent = score;
+
             button.disabled = true;
-            
             const nextButton = document.querySelector(`#upgrade-${index + 2}`);
-            if (nextButton) nextButton.disabled = false;
-            
-            syncWithBot();
+            if (nextButton) {
+                nextButton.disabled = false;
+            }
+
+            checkForUpgrades();
         } else {
-            showError(`Недостаточно чадов. Нужно: ${cost}`);
+            showError(`Недостаточно чадов. У вас ${score}. Вам нужно ${cost}`);
         }
     });
 });
 
-// Магазин скинов
-function updateShopButtons() {
-    document.querySelectorAll('.buy-button').forEach((button) => {
-        const skin = button.getAttribute('data-skin');
-        if (boughtSkins[skin]) {
-            button.textContent = selectedSkin === skin ? 'ВЫБРАНО' : 'ВЫБРАТЬ';
-            button.style.backgroundColor = selectedSkin === skin ? '#FFA500' : '#4CAF50';
-        }
-    });
-}
+// Открытие и закрытие модального окна магазина
+shopButton.addEventListener('click', () => {
+    shopModal.style.display = 'flex';
+    updateShopButtons();
+});
 
+closeShopModal.addEventListener('click', () => {
+    shopModal.style.display = 'none';
+});
+
+// Покупка скинов
 document.querySelectorAll('.buy-button').forEach((button) => {
     button.addEventListener('click', () => {
         const cost = parseInt(button.getAttribute('data-cost'));
         const skin = button.getAttribute('data-skin');
 
-        if (!boughtSkins[skin] && score >= cost) {
-            score -= cost;
-            boughtSkins[skin] = true;
+        // Проверяем, хватает ли денег и не куплен ли скин ранее
+        if (score >= cost && !boughtSkins[skin]) {
+            score -= cost;  // Уменьшаем счет только если хватает денег
+            boughtSkins[skin] = true;  // Отмечаем, что скин куплен
+
             localStorage.setItem('score', score);
             localStorage.setItem('boughtSkins', JSON.stringify(boughtSkins));
-            button.textContent = 'ВЫБРАТЬ';
-        }
-        
-        if (boughtSkins[skin]) {
+            scoreElement.textContent = score;
+
+            button.textContent = 'ВЫБРАТЬ'; // Меняем текст кнопки после покупки
+            button.disabled = false;
+        } else if (boughtSkins[skin]) {
             selectedSkin = skin;
             clickableImage.src = selectedSkin;
             localStorage.setItem('selectedSkin', selectedSkin);
-            updateShopButtons();
-            syncWithBot();
+
+            updateShopButtons(); // Обновляем кнопки в магазине
         } else {
-            showError(`Недостаточно Чадов: ${cost} требуется`);
+            showError(`Недостаточно чадов. У вас ${score}. Вам нужно ${cost}`);
         }
     });
 });
 
-// Промокоды
+function updateShopButtons() {
+    document.querySelectorAll('.buy-button').forEach((button) => {
+        const skin = button.getAttribute('data-skin');
+        if (boughtSkins[skin]) {
+            if (selectedSkin === skin) {
+                button.textContent = 'ВЫБРАНО';
+                button.classList.add('selected-button');
+            } else {
+                button.textContent = 'ВЫБРАНО';
+                button.classList.remove('selected-button');
+            }
+        }
+    });
+}
+
+// Промокод
 promoButton.addEventListener('click', () => {
     promoModal.style.display = 'flex';
 });
@@ -209,59 +188,65 @@ activatePromoButton.addEventListener('click', () => {
     const promoCode = promoCodeInput.value.trim();
     const isPromoCodeUsed = localStorage.getItem('promoCodeUsed') === 'true';
 
-    if (promoCode === 'Пупс' && !isPromoCodeUsed) {
-        localStorage.setItem('promoCodeUsed', 'true');
-        score += 10000;
-        scoreElement.textContent = score;
-        localStorage.setItem('score', score);
-        promoMessageElement.textContent = 'Промокод активирован! +10,000 Чадов';
-        promoMessageElement.style.color = 'green';
-        syncWithBot();
+    if (promoCode === '') {
+        promoMessageElement.textContent = 'Промокод не введен. Попробуйте еще раз.';
+        showPromoMessage(promoMessageElement.textContent);
+    } else if (promoCode === 'Пупс') {
+        if (!isPromoCodeUsed) {
+            localStorage.setItem('promoCodeUsed', 'true');
+promoMessageElement.style.color = 'green'; // Устанавливаем зеленый цвет
+            showPromoMessage('Промокод успешно активирован ждите приз!');
+            setTimeout(() => {
+                score += 10000;
+                scoreElement.textContent = score;
+                localStorage.setItem('score', score);
+                checkForUpgrades();
+            }, 20000);
+        } else {
+promoMessageElement.textContent = 'Этот промокод уже был использован';
+            showPromoMessage(promoMessageElement.textContent);
+        }
     } else {
-        promoMessageElement.textContent = 'Неверный или уже использованный промокод';
-        promoMessageElement.style.color = 'red';
+        promoMessageElement.textContent = 'Неверный промокод. Попробуйте еще раз.';
+        showPromoMessage(promoMessageElement.textContent);
     }
+    promoModal.style.display = 'none';
 });
+
+function showPromoMessage(message) {
+    promoMessageElement.textContent = message;
+    promoMessageElement.style.display = 'block';
+    setTimeout(() => {
+        promoMessageElement.style.display = 'none';
+    }, 5000);
+}
 
 // Сброс игры
 resetButton.addEventListener('click', () => {
     resetModal.style.display = 'flex';
 });
 
+closeResetModal.addEventListener('click', () => {
+    resetModal.style.display = 'none';
+});
+
 confirmResetButton.addEventListener('click', () => {
     score = 0;
     clickPower = 1;
     selectedSkin = 'your-image.png';
-    localStorage.clear();
-    scoreElement.textContent = score;
+    localStorage.setItem('score', score);
+    localStorage.setItem('clickPower', clickPower);
+    localStorage.removeItem('boughtUpgrades');
+    localStorage.removeItem('boughtSkins');
+    localStorage.removeItem('promoCodeUsed');
+    localStorage.setItem('selectedSkin', selectedSkin);
     clickableImage.src = selectedSkin;
-    initializeUpgradeButtons();
-    updateShopButtons();
+    scoreElement.textContent = score;
     resetModal.style.display = 'none';
-    syncWithBot();
+    checkForUpgrades();
+    updateShopButtons();
 });
 
 cancelResetButton.addEventListener('click', () => {
     resetModal.style.display = 'none';
-});
-
-// Магазин
-shopButton.addEventListener('click', () => {
-    shopModal.style.display = 'flex';
-    updateShopButtons();
-});
-
-closeShopModal.addEventListener('click', () => {
-    shopModal.style.display = 'none';
-});
-
-// Синхронизация
-syncButton.addEventListener('click', syncWithBot);
-
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', () => {
-    initializeUpgradeButtons();
-    updateShopButtons();
-    checkReferral();
-    scoreElement.textContent = score;
 });
