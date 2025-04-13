@@ -250,3 +250,43 @@ confirmResetButton.addEventListener('click', () => {
 cancelResetButton.addEventListener('click', () => {
     resetModal.style.display = 'none';
 });
+
+// Добавляем в начало game.js (после объявления переменных score и clickPower)
+let refBonusReceived = localStorage.getItem('refBonusReceived') === 'true';
+
+// Функция для проверки реферальной ссылки
+function checkReferral() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refParam = urlParams.get('ref');
+    
+    if (refParam && !refBonusReceived) {
+        const referrerId = refParam;
+        
+        // Начисляем бонус новому игроку (3000 Чадов)
+        score += 3000;
+        scoreElement.textContent = score;
+        localStorage.setItem('score', score);
+        
+        // Помечаем, что бонус получен
+        refBonusReceived = true;
+        localStorage.setItem('refBonusReceived', 'true');
+        
+        // Отправляем уведомление
+        showError("🎉 Вы получили 3,000 Чадов за реферальную регистрацию!");
+        
+        // Здесь должен быть запрос к боту, чтобы начислить 15,999 Чадов рефереру
+        // В реальной реализации нужно использовать Telegram WebApp или свой API
+        notifyReferrerBonus(referrerId);
+    }
+}
+
+// Функция для уведомления бота о начислении бонуса рефереру
+function notifyReferrerBonus(referrerId) {
+    // В реальном проекте здесь должен быть fetch-запрос к вашему бэкенду
+    console.log(`Реферер ${referrerId} должен получить 15,999 Чадов`);
+    // Пример для теста: 
+    // fetch(`https://ваш-сервер.com/api/give-bonus?referrerId=${referrerId}`);
+}
+
+// Вызываем при загрузке страницы
+checkReferral();
