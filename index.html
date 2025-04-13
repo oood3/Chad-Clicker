@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Кликер Чадов</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <div class="container">
@@ -27,25 +26,15 @@
             <button id="upgrade-11">Улучшение 11 - 7777777 Чадов</button>
             <button id="upgrade-12">Улучшение 12 - 1000000000 Чадов</button>
         </div>
-        
-        <div id="telegram-widget">
-            <button id="open-telegram">Открыть в Telegram</button>
-            <div id="referral-section">
-                <input type="text" id="referral-link" readonly>
-                <button id="copy-referral">Копировать</button>
-            </div>
-        </div>
-        
         <button id="promo-button">ПРОМОКОДЫ</button>
         <button id="reset-button" class="reset-button">СБРОС ИГРЫ</button>
         <button id="shop-button" class="shop-button">МАГАЗИН</button>
-        <button id="referral-button" class="referral-button">РЕФ. СИСТЕМА</button>
-    </div>
+</div>
 
     <!-- Модальное окно магазина -->
-    <div id="shop-modal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
+    <div id="shop-modal" class="shop-modal">
+        <div class="shop-modal-content">
+            <span class="close-shop">&times;</span>
             <h2>МАГАЗИН</h2>
             <div class="shop-item">
                 <img class="shop-image" src="skin1.png" alt="Skin 1">
@@ -65,27 +54,30 @@
                 <p>Цена: 100,000,000,000 Чадов</p>
                 <button class="buy-button" data-cost="100000000000" data-skin="skin3.png">КУПИТЬ</button>
             </div>
-        </div>
+    	</div>
     </div>
 
-    <!-- Модальное окно реферальной системы -->
-    <div id="referral-modal" class="modal">
-        <div class="modal-content">
+    <div id="promo-modal" class="promo-modal">
+        <div class="promo-modal-content">
             <span class="close">&times;</span>
-            <h2>Реферальная система</h2>
-            <div class="referral-info">
-                <p>🎉 За каждого приглашенного друга:</p>
-                <p>💎 <span class="highlight">Ты получаешь 19,500 Чадов</span></p>
-                <p>✨ <span class="highlight">Друг получает 5,000 Чадов</span> при старте!</p>
-            </div>
-            <div class="referral-stats">
-                <p>👥 Приглашено друзей: <span id="referral-count">0</span></p>
-                <p>💰 Получено Чадов: <span id="referral-earned">0</span></p>
-            </div>
+            <h2>Введите промокод</h2>
+            <input type="text" id="promo-code" placeholder="Введите промокод">
+            <button id="activate-promo">Активировать</button>
+            <div id="promo-message" class="promo-message"></div>
+        </div>
+    </div>
+    <div id="reset-modal" class="reset-modal">
+        <div class="reset-modal-content">
+            <span class="close-reset">&times;</span>
+            <h2>Подтверждение сброса</h2>
+            <p>Если вы нажмете кнопку «Да, сбросить», ваш аккаунт будет полностью сброшен: вся валюта, скины, улучшения будут сброшены!</p>
+            <button id="confirm-reset">Да, сбросить</button>
+            <button id="cancel-reset">Отмена</button>
         </div>
     </div>
 
     <div id="error-message" class="error-message"></div>
     <script src="game.js"></script>
+
 </body>
 </html>
