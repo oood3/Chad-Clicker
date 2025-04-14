@@ -273,38 +273,71 @@ closeWithdrawModal.addEventListener('click', () => {
     withdrawModal.style.display = 'none';
 });
 
-// Подтверждение вывода
-confirmWithdrawButton.addEventListener('click', () => {
-    const MIN_WITHDRAW = 1000000; // 1 млн чадов
-    const cardNumber = cardNumberInput.value.trim();
+// ... предыдущий код ...
+
+// Обработчик ввода номера карты
+cardNumberInput.addEventListener('input', function(e) {
+    // Удаляем все нецифровые символы
+    let value = this.value.replace(/\D/g, '');
     
-    // Проверка номера карты (простая валидация)
-    const cardRegex = /^[0-9]{16}$/;
+    // Добавляем пробелы через каждые 4 цифры
+    let formattedValue = '';
+    for (let i = 0; i < value.length; i++) {
+        if (i > 0 && i % 4 === 0) {
+            formattedValue += ' ';
+        }
+        formattedValue += value[i];
+    }
+    
+    // Обрезаем до 16 цифр (19 символов с пробелами)
+    if (formattedValue.length > 19) {
+        formattedValue = formattedValue.substring(0, 19);
+    }
+    
+    this.value = formattedValue;
+    
+    // Если пользователь удаляет пробел, удаляем и предыдущую цифру
+    if (e.inputType === 'deleteContentBackward') {
+        const cursorPos = this.selectionStart;
+        if (this.value[cursorPos] === ' ') {
+            this.value = this.value.substring(0, cursorPos - 1) + this.value.substring(cursorPos);
+            this.setSelectionRange(cursorPos - 1, cursorPos - 1);
+        }
+    }
+});
+
+// Проверка номера карты при подтверждении
+confirmWithdrawButton.addEventListener('click', () => {
+    const MIN_WITHDRAW = 1000000;
+    const cardNumber = cardNumberInput.value.replace(/\s/g, ''); // Удаляем пробелы
     
     if (score < MIN_WITHDRAW) {
-        showWithdrawMessage(`Недостаточно средств. Минимальная сумма для вывода: 1,000,000 Чадов. У вас: ${score} Чадов`, 'error');
+        showWithdrawMessage(`Недостаточно средств. Минимальная сумма для вывода: 1,000,000 Чадов. У вас: ${score.toLocaleString()} Чадов`, 'error');
         return;
     }
     
-    if (!cardRegex.test(cardNumber)) {
-        showWithdrawMessage('Введите корректный номер карты (16 цифр)', 'error');
+    if (cardNumber.length !== 16 || !/^\d+$/.test(cardNumber)) {
+        showWithdrawMessage('Ошибка: номер карты должен содержать ровно 16 цифр (пример: 1234 5678 9012 3456)', 'error');
+        cardNumberInput.focus();
         return;
     }
     
     // Если все проверки пройдены
     score -= MIN_WITHDRAW;
-    scoreElement.textContent = score;
+    scoreElement.textContent = score.toLocaleString();
     localStorage.setItem('score', score);
     
-    showWithdrawMessage('Заявка на вывод 1,000,000 Чадов (≈0.05 грн) успешно подана! Ожидайте поступления средств в течение 3 рабочих дней.', 'success');
+    showWithdrawMessage(`Заявка на вывод 1,000,000 Чадов (≈0.05 грн) на карту ${cardNumber.substring(0, 4)} **** **** ${cardNumber.substring(12)} успешно подана! Средства поступят в течение 3 рабочих дней.`, 'success');
     
-    // Очищаем поле и закрываем модальное окно через 3 секунды
-    cardNumberInput.value = '';
+    // Очищаем поле и закрываем модальное окно через 5 секунд
     setTimeout(() => {
+        cardNumberInput.value = '';
         withdrawModal.style.display = 'none';
         withdrawMessageElement.style.display = 'none';
     }, 5000);
 });
+
+// ... остальной код ...
 
 function showWithdrawMessage(message, type) {
     withdrawMessageElement.textContent = message;
