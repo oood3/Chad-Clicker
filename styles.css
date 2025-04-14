@@ -365,3 +365,17 @@ body::before {
     color: #a94442;
     display: block;
 }
+
+/* ... предыдущие стили ... */
+
+.card-warning {
+    color: #666;
+    font-size: 12px;
+    margin-top: -5px;
+    margin-bottom: 10px;
+}
+
+.withdraw-modal-content input[type="tel"] {
+    letter-spacing: 1px;
+    font-family: monospace;
+}
