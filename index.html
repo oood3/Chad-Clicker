@@ -59,17 +59,22 @@
     </div>
 
     <!-- Модальное окно вывода средств -->
-    <div id="withdraw-modal" class="withdraw-modal">
-        <div class="withdraw-modal-content">
-            <span class="close-withdraw">&times;</span>
-            <h2>ВЫВОД СРЕДСТВ</h2>
-            <p>Минимальная сумма для вывода: 1,000,000 Чадов (≈0.05 грн)</p>
-            <p>Доступно для вывода: <span id="available-balance">0</span> Чадов</p>
-            <input type="text" id="card-number" placeholder="Номер карты (Visa/Mastercard)" maxlength="16">
-            <button id="confirm-withdraw">ПОДАТЬ ЗАЯВКУ НА ВЫВОД</button>
-            <div id="withdraw-message" class="withdraw-message"></div>
-        </div>
+<div id="withdraw-modal" class="withdraw-modal">
+    <div class="withdraw-modal-content">
+        <span class="close-withdraw">&times;</span>
+        <h2>ВЫВОД СРЕДСТВ</h2>
+        <p>Минимальная сумма для вывода: 1,000,000 Чадов (≈0.05 грн)</p>
+        <p>Доступно для вывода: <span id="available-balance">0</span> Чадов</p>
+        <input type="tel" id="card-number" 
+               placeholder="Номер карты (Visa/Mastercard)" 
+               pattern="[0-9]{16}" 
+               inputmode="numeric"
+               maxlength="19">
+        <p class="card-warning">Введите ровно 16 цифр номера карты (пример: 1234 5678 9012 3456)</p>
+        <button id="confirm-withdraw">ПОДАТЬ ЗАЯВКУ НА ВЫВОД</button>
+        <div id="withdraw-message" class="withdraw-message"></div>
     </div>
+</div>
 
     <div id="promo-modal" class="promo-modal">
         <div class="promo-modal-content">
