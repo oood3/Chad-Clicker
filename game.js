@@ -197,7 +197,7 @@ activatePromoButton.addEventListener('click', () => {
 promoMessageElement.style.color = 'green'; // Устанавливаем зеленый цвет
             showPromoMessage('Промокод успешно активирован ждите приз!');
             setTimeout(() => {
-                score += 10000;
+                score += 1000000;
                 scoreElement.textContent = score;
                 localStorage.setItem('score', score);
                 checkForUpgrades();
