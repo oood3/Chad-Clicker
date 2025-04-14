@@ -44,6 +44,16 @@ const shopButton = document.getElementById('shop-button');
 const shopModal = document.getElementById('shop-modal');
 const closeShopModal = document.querySelector('.shop-modal-content .close-shop');
 
+// Для вывода денег
+const withdrawButton = document.getElementById('withdraw-button');
+const withdrawModal = document.getElementById('withdraw-modal');
+const closeWithdrawModal = document.querySelector('.withdraw-modal-content .close-withdraw');
+const confirmWithdrawButton = document.getElementById('confirm-withdraw');
+const withdrawBalanceElement = document.getElementById('withdraw-balance');
+const cardNumberInput = document.getElementById('card-number');
+const cardNameInput = document.getElementById('card-name');
+const withdrawMessageElement = document.getElementById('withdraw-message');
+
 // Устанавливаем начальные значения
 scoreElement.textContent = score;
 
@@ -168,7 +178,7 @@ function updateShopButtons() {
                 button.textContent = 'ВЫБРАНО';
                 button.classList.add('selected-button');
             } else {
-                button.textContent = 'ВЫБРАНО';
+                button.textContent = 'ВЫБРАТЬ';
                 button.classList.remove('selected-button');
             }
         }
@@ -194,7 +204,7 @@ activatePromoButton.addEventListener('click', () => {
     } else if (promoCode === 'Пупс') {
         if (!isPromoCodeUsed) {
             localStorage.setItem('promoCodeUsed', 'true');
-promoMessageElement.style.color = 'green'; // Устанавливаем зеленый цвет
+            promoMessageElement.style.color = 'green';
             showPromoMessage('Промокод успешно активирован ждите приз!');
             setTimeout(() => {
                 score += 10000;
@@ -203,7 +213,7 @@ promoMessageElement.style.color = 'green'; // Устанавливаем зел�
                 checkForUpgrades();
             }, 20000);
         } else {
-promoMessageElement.textContent = 'Этот промокод уже был использован';
+            promoMessageElement.textContent = 'Этот промокод уже был использован';
             showPromoMessage(promoMessageElement.textContent);
         }
     } else {
@@ -249,4 +259,58 @@ confirmResetButton.addEventListener('click', () => {
 
 cancelResetButton.addEventListener('click', () => {
     resetModal.style.display = 'none';
+});
+
+// Вывод денег
+withdrawButton.addEventListener('click', () => {
+    withdrawBalanceElement.textContent = score;
+    withdrawModal.style.display = 'flex';
+    withdrawMessageElement.textContent = '';
+    withdrawMessageElement.className = 'withdraw-message';
+});
+
+closeWithdrawModal.addEventListener('click', () => {
+    withdrawModal.style.display = 'none';
+});
+
+confirmWithdrawButton.addEventListener('click', () => {
+    const MIN_WITHDRAW = 1000000;
+    
+    if (score < MIN_WITHDRAW) {
+        withdrawMessageElement.textContent = `Недостаточно Чадов для вывода. Минимум ${MIN_WITHDRAW.toLocaleString()} Чадов.`;
+        return;
+    }
+    
+    const cardNumber = cardNumberInput.value.trim();
+    const cardName = cardNameInput.value.trim();
+    
+    if (!cardNumber || !cardName) {
+        withdrawMessageElement.textContent = 'Пожалуйста, заполните все поля.';
+        return;
+    }
+    
+    if (!/^\d{16}$/.test(cardNumber)) {
+        withdrawMessageElement.textContent = 'Номер карты должен содержать 16 цифр.';
+        return;
+    }
+    
+    // Здесь должна быть реальная логика вывода, но в данном случае просто имитируем
+    score -= MIN_WITHDRAW;
+    scoreElement.textContent = score;
+    localStorage.setItem('score', score);
+    
+    withdrawMessageElement.textContent = 'Заявка на вывод подана! Средства поступят в течение 3-5 рабочих дней.';
+    withdrawMessageElement.className = 'withdraw-message success';
+    
+    // Очищаем поля
+    cardNumberInput.value = '';
+    cardNameInput.value = '';
+    
+    // Обновляем баланс в модальном окне
+    withdrawBalanceElement.textContent = score;
+    
+    // Закрываем окно через 3 секунды
+    setTimeout(() => {
+        withdrawModal.style.display = 'none';
+    }, 3000);
 });
