@@ -1,503 +1,279 @@
-let score = localStorage.getItem('score') ? parseInt(localStorage.getItem('score')) : 0;
-
-let clickPower = localStorage.getItem('clickPower') ? parseInt(localStorage.getItem('clickPower')) : 1;
-
-let currentSkin = localStorage.getItem('currentSkin') || 'your-image.png';
-
-
-
-const upgrades = {
-
-    9000: 3,
-
-    50000: 9,
-
-    100000: 15,
-
-    250000: 23,
-
-    400000: 43,
-
-    1000000: 101,
-
-    1500000: 148,
-
-    3000000: 500,
-
-    4000000: 614,
-
-    5000000: 777,
-
-    7777777: 1487,
-
-    1000000000: 2999
-
-};
-
-
-
-// Получаем состояние улучшений и скинов из localStorage
-
-const boughtUpgrades = JSON.parse(localStorage.getItem('boughtUpgrades')) || {};
-
-const boughtSkins = JSON.parse(localStorage.getItem('boughtSkins')) || {};
-
-let selectedSkin = localStorage.getItem('selectedSkin') || currentSkin;
-
-
-
-const scoreElement = document.getElementById('score');
-
-const clickableImage = document.getElementById('clickable-image');
-
-clickableImage.src = selectedSkin;
-
-
-
-const errorMessageElement = document.getElementById('error-message');
-
-const promoButton = document.getElementById('promo-button');
-
-const promoModal = document.getElementById('promo-modal');
-
-const closeModal = document.querySelector('.promo-modal-content .close');
-
-const promoCodeInput = document.getElementById('promo-code');
-
-const activatePromoButton = document.getElementById('activate-promo');
-
-const promoMessageElement = document.getElementById('promo-message');
-
-const resetButton = document.getElementById('reset-button');
-
-const resetModal = document.getElementById('reset-modal');
-
-const closeResetModal = document.querySelector('.reset-modal-content .close-reset');
-
-const confirmResetButton = document.getElementById('confirm-reset');
-
-const cancelResetButton = document.getElementById('cancel-reset');
-
-
-
-// Для магазина
-
-const shopButton = document.getElementById('shop-button');
-
-const shopModal = document.getElementById('shop-modal');
-
-const closeShopModal = document.querySelector('.shop-modal-content .close-shop');
-
-
-
-// Устанавливаем начальные значения
-
-scoreElement.textContent = score;
-
-
-
-function initializeUpgradeButtons() {
-
-    document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
-
-        const cost = Object.keys(upgrades)[index];
-
-        if (boughtUpgrades[cost]) {
-
-            button.disabled = true; // Блокируем купленные улучшения
-
-        } else if (index > 0 && !boughtUpgrades[Object.keys(upgrades)[index - 1]]) {
-
-            button.disabled = true; // Блокируем улучшения, пока предыдущее не куплено
-
-        } else {
-
-            button.disabled = false; // Разблокируем доступные улучшения
-
-        }
-
-    });
-
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f0f0f0;
+    background-image: url('hand-holding-money-through-hole-yellow-paper-wall-vertical-image_253401-7181.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    height: auto; /* Установите авто, чтобы высота адаптировалась к содержимому */
+    margin: 0;
+    /* overflow: hidden; Уберите или закомментируйте эту строку */
 }
 
-
-
-// Запускаем начальную инициализацию кнопок
-
-initializeUpgradeButtons();
-
-
-
-clickableImage.addEventListener('click', (event) => {
-
-    score += clickPower;
-
-    scoreElement.textContent = score;
-
-    localStorage.setItem('score', score);
-
-    showUpgradeAnimation(event);
-
-});
-
-
-
-function showUpgradeAnimation(event) {
-
-    const upgradeAnimation = document.createElement('div');
-
-    upgradeAnimation.className = 'upgrade-animation';
-
-    upgradeAnimation.innerText = `+${clickPower}`;
-
-    document.body.appendChild(upgradeAnimation);
-
-    upgradeAnimation.style.left = `${event.clientX}px`;
-
-    upgradeAnimation.style.top = `${event.clientY}px`;
-
-
-
-    setTimeout(() => {
-
-        upgradeAnimation.remove();
-
-    }, 1000);
-
+.container {
+    margin-top: 50px;
 }
 
-
-
-function showError(message) {
-
-    errorMessageElement.textContent = message;
-
-    errorMessageElement.style.display = 'block';
-
-    setTimeout(() => {
-
-        errorMessageElement.style.display = 'none';
-
-    }, 5000);
-
+#clicker {
+    margin: 20px;
 }
 
-
-
-function checkForUpgrades() {
-
-    initializeUpgradeButtons();
-
+#clickable-image {
+    width: 200px;
+    cursor: pointer;
+    transition: transform 0.05s ease; /* Более быстрая анимация */
 }
 
-
-
-// Обработчики для кнопок улучшений
-
-document.querySelectorAll('#upgrade-info button').forEach((button, index) => {
-
-    button.addEventListener('click', () => {
-
-        const cost = Object.keys(upgrades)[index];
-
-        if (score >= cost) {
-
-            score -= cost;
-
-            clickPower = upgrades[cost];
-
-            boughtUpgrades[cost] = true;
-
-            localStorage.setItem('score', score);
-
-            localStorage.setItem('clickPower', clickPower);
-
-            localStorage.setItem('boughtUpgrades', JSON.stringify(boughtUpgrades));
-
-            scoreElement.textContent = score;
-
-
-
-            button.disabled = true;
-
-            const nextButton = document.querySelector(`#upgrade-${index + 2}`);
-
-            if (nextButton) {
-
-                nextButton.disabled = false;
-
-            }
-
-
-
-            checkForUpgrades();
-
-        } else {
-
-            showError(`Недостаточно чадов. У вас ${score}. Вам нужно ${cost}`);
-
-        }
-
-    });
-
-});
-
-
-
-// Открытие и закрытие модального окна магазина
-
-shopButton.addEventListener('click', () => {
-
-    shopModal.style.display = 'flex';
-
-    updateShopButtons();
-
-});
-
-
-
-closeShopModal.addEventListener('click', () => {
-
-    shopModal.style.display = 'none';
-
-});
-
-
-
-// Покупка скинов
-
-document.querySelectorAll('.buy-button').forEach((button) => {
-
-    button.addEventListener('click', () => {
-
-        const cost = parseInt(button.getAttribute('data-cost'));
-
-        const skin = button.getAttribute('data-skin');
-
-
-
-        // Проверяем, хватает ли денег и не куплен ли скин ранее
-
-        if (score >= cost && !boughtSkins[skin]) {
-
-            score -= cost;  // Уменьшаем счет только если хватает денег
-
-            boughtSkins[skin] = true;  // Отмечаем, что скин куплен
-
-
-
-            localStorage.setItem('score', score);
-
-            localStorage.setItem('boughtSkins', JSON.stringify(boughtSkins));
-
-            scoreElement.textContent = score;
-
-
-
-            button.textContent = 'ВЫБРАТЬ'; // Меняем текст кнопки после покупки
-
-            button.disabled = false;
-
-        } else if (boughtSkins[skin]) {
-
-            selectedSkin = skin;
-
-            clickableImage.src = selectedSkin;
-
-            localStorage.setItem('selectedSkin', selectedSkin);
-
-
-
-            updateShopButtons(); // Обновляем кнопки в магазине
-
-        } else {
-
-            showError(`Недостаточно чадов. У вас ${score}. Вам нужно ${cost}`);
-
-        }
-
-    });
-
-});
-
-
-
-function updateShopButtons() {
-
-    document.querySelectorAll('.buy-button').forEach((button) => {
-
-        const skin = button.getAttribute('data-skin');
-
-        if (boughtSkins[skin]) {
-
-            if (selectedSkin === skin) {
-
-                button.textContent = 'ВЫБРАНО';
-
-                button.classList.add('selected-button');
-
-            } else {
-
-                button.textContent = 'ВЫБРАНО';
-
-                button.classList.remove('selected-button');
-
-            }
-
-        }
-
-    });
-
+#clickable-image:active {
+    transform: scale(0.9); /* Лёгкое уменьшение для эффекта нажатия */
 }
 
+#upgrade-info {
+    margin-top: 20px;
+}
 
+button {
+    margin: 5px;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
 
-// Промокод
+/* Убираем влияние анимации на клики */
+.upgrade-animation {
+    position: absolute;
+    font-size: 24px;
+    color: green;
+    animation: fadeInUp 1s;
+    pointer-events: none; /* Это позволяет кликам проходить сквозь анимацию */
+}
 
-promoButton.addEventListener('click', () => {
+/* Эффект нажатия на кликер */
+#clickable-image {
+    width: 200px;
+    cursor: pointer;
+    transition: transform 0.05s ease;
+}
 
-    promoModal.style.display = 'flex';
+#clickable-image:active {
+    transform: scale(0.9); /* Уменьшение изображения при клике */
+}
 
-});
-
-
-
-closeModal.addEventListener('click', () => {
-
-    promoModal.style.display = 'none';
-
-});
-
-
-
-activatePromoButton.addEventListener('click', () => {
-
-    const promoCode = promoCodeInput.value.trim();
-
-    const isPromoCodeUsed = localStorage.getItem('promoCodeUsed') === 'true';
-
-
-
-    if (promoCode === '') {
-
-        promoMessageElement.textContent = 'Промокод не введен. Попробуйте еще раз.';
-
-        showPromoMessage(promoMessageElement.textContent);
-
-    } else if (promoCode === 'Пупс') {
-
-        if (!isPromoCodeUsed) {
-
-            localStorage.setItem('promoCodeUsed', 'true');
-
-promoMessageElement.style.color = 'green'; // Устанавливаем зеленый цвет
-
-            showPromoMessage('Промокод успешно активирован ждите приз!');
-
-            setTimeout(() => {
-
-                score += 10000;
-
-                scoreElement.textContent = score;
-
-                localStorage.setItem('score', score);
-
-                checkForUpgrades();
-
-            }, 20000);
-
-        } else {
-
-promoMessageElement.textContent = 'Этот промокод уже был использован';
-
-            showPromoMessage(promoMessageElement.textContent);
-
-        }
-
-    } else {
-
-        promoMessageElement.textContent = 'Неверный промокод. Попробуйте еще раз.';
-
-        showPromoMessage(promoMessageElement.textContent);
-
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
-
-    promoModal.style.display = 'none';
-
-});
-
-
-
-function showPromoMessage(message) {
-
-    promoMessageElement.textContent = message;
-
-    promoMessageElement.style.display = 'block';
-
-    setTimeout(() => {
-
-        promoMessageElement.style.display = 'none';
-
-    }, 5000);
-
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
+.error-message {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f44336;
+    color: #ffffff;
+    padding: 15px;
+    border-radius: 5px;
+    display: none;
+    animation: shake 0.5s;
+}
 
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+}
 
-// Сброс игры
+.promo-modal, .reset-modal, .shop-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+}
 
-resetButton.addEventListener('click', () => {
+.promo-modal-content, .reset-modal-content, .shop-modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
 
-    resetModal.style.display = 'flex';
+.promo-modal-content .close, .reset-modal-content .close-reset, .shop-modal-content .close-shop {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+}
 
-});
+.promo-message {
+    margin-top: 10px;
+    font-size: 16px;
+    color: #f44336;
+}
 
+.reset-button {
+    background-color: black;
+    border: 2px solid red;
+    color: white;
+    margin-top: 20px;
+}
 
+.shop-button {
+    position: relative;
+    background: linear-gradient(to right, orange, green);
+    border: none;
+    color: white;
+    font-size: 18px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 20px;
+    overflow: hidden;
+}
 
-closeResetModal.addEventListener('click', () => {
+.shop-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;  /* Центрируем по вертикали */
+    left: -50px;  /* Начальная позиция луча */
+    width: 10px;  /* Узкая ширина луча */
+    height: 250%; /* Высота больше кнопки */
+    background: rgba(255, 255, 255, 0.5); /* Белый полупрозрачный луч */
+    filter: blur(4px); /* Размытие для мягкости */
+    transform: translateY(-50%) rotate(30deg); /* Центрирование и поворот на 30 градусов */
+    animation: shine 2s infinite; /* Анимация движения */
+}
 
-    resetModal.style.display = 'none';
+@keyframes shine {
+    0% {
+        left: -50px; /* Начало вне кнопки */
+    }
+    100% {
+        left: 100%;  /* Конец за кнопкой */
+    }
+}
 
-});
+.shop-button:hover {
+    opacity: 0.8;
+}
 
+.buy-button {
+    background-color: green;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 5px 0;
+    width: 100%;
+}
 
+.buy-button:hover {
+    opacity: 0.8;
+}
 
-confirmResetButton.addEventListener('click', () => {
+.shop-image {
+    width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
 
-    score = 0;
+.shop-item {
+    margin: 10px 0;
+}
 
-    clickPower = 1;
+.selected-button {
+    background-color: orange !important;
+    color: white;
+}
 
-    selectedSkin = 'your-image.png';
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    position: relative; /* Позволяет использовать абсолютное позиционирование для псевдоэлемента */
+}
 
-    localStorage.setItem('score', score);
+body::before {
+    content: '';
+    position: fixed; /* Фиксирует фон */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('hand-holding-money-through-hole-yellow-paper-wall-vertical-image_253401-7181.png');
+    background-size: cover;
+    background-position: center;
+    z-index: -1; /* Устанавливаем фоновый слой ниже остальных */
+}
 
-    localStorage.setItem('clickPower', clickPower);
+.container {
+    /* Оберните ваш контент в этот класс, чтобы установить его стиль */
+    padding: 20px; /* Добавьте отступы для вашего контента */
+}
 
-    localStorage.removeItem('boughtUpgrades');
+#animation {
+    position: absolute; /* Убедитесь, что элемент позиционируется абсолютно */
+    width: 50px; /* Ширина анимации */
+    height: 50px; /* Высота анимации */
+    background-color: red; /* Цвет анимации */
+    border-radius: 50%; /* Закругленные края */
+    pointer-events: none; /* Отключаем события мыши для анимации */
+}
 
-    localStorage.removeItem('boughtSkins');
+.animate {
+    animation: scaleUp 1s forwards; /* Пример анимации */
+}
 
-    localStorage.removeItem('promoCodeUsed');
+@keyframes scaleUp {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0; /* Исчезает после увеличения */
+    }
+}
 
-    localStorage.setItem('selectedSkin', selectedSkin);
+/* Анимация увеличения для кнопок при входе в магазин */
+@keyframes grow {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
 
-    clickableImage.src = selectedSkin;
+.shop-modal-content .buy-button {
+    animation: grow 0.5s ease;
+}
 
-    scoreElement.textContent = score;
+* {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
 
-    resetModal.style.display = 'none';
-
-    checkForUpgrades();
-
-    updateShopButtons();
-
-});
-
-
-
-cancelResetButton.addEventListener('click', () => {
-
-    resetModal.style.display = 'none';
-
-});
+* {
+    user-select: none; /* Отключает выделение текста */
+    -webkit-user-select: none; /* Отключает выделение текста в Safari */
+    -ms-user-select: none; /* Отключает выделение текста в старых версиях IE */
+}
