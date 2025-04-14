@@ -249,4 +249,4 @@ confirmResetButton.addEventListener('click', () => {
 
 cancelResetButton.addEventListener('click', () => {
     resetModal.style.display = 'none';
-});
+}); 
