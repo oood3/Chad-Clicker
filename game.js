@@ -197,11 +197,11 @@ activatePromoButton.addEventListener('click', () => {
 promoMessageElement.style.color = 'green'; // Устанавливаем зеленый цвет
             showPromoMessage('Промокод успешно активирован ждите приз!');
             setTimeout(() => {
-                score += 1000000;
+                score += 10000;
                 scoreElement.textContent = score;
                 localStorage.setItem('score', score);
                 checkForUpgrades();
-            }, 1000);
+            }, 3000);
         } else {
 promoMessageElement.textContent = 'Этот промокод уже был использован';
             showPromoMessage(promoMessageElement.textContent);
