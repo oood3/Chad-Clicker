@@ -29,7 +29,8 @@
         <button id="promo-button">ПРОМОКОДЫ</button>
         <button id="reset-button" class="reset-button">СБРОС ИГРЫ</button>
         <button id="shop-button" class="shop-button">МАГАЗИН</button>
-</div>
+        <button id="withdraw-button" class="withdraw-button">ВЫВОД ДЕНЕГ</button>
+    </div>
 
     <!-- Модальное окно магазина -->
     <div id="shop-modal" class="shop-modal">
@@ -54,7 +55,21 @@
                 <p>Цена: 100,000,000,000 Чадов</p>
                 <button class="buy-button" data-cost="100000000000" data-skin="skin3.png">КУПИТЬ</button>
             </div>
-    	</div>
+        </div>
+    </div>
+
+    <!-- Модальное окно вывода денег -->
+    <div id="withdraw-modal" class="withdraw-modal">
+        <div class="withdraw-modal-content">
+            <span class="close-withdraw">&times;</span>
+            <h2>ВЫВОД ДЕНЕГ</h2>
+            <p>Минимальная сумма для вывода: 1,000,000 Чадов (≈ 0.05 грн)</p>
+            <p>Ваш баланс: <span id="withdraw-balance">0</span> Чадов</p>
+            <input type="text" id="card-number" placeholder="Номер карты (Visa/Mastercard)" maxlength="16">
+            <input type="text" id="card-name" placeholder="Имя владельца карты">
+            <button id="confirm-withdraw">ПОДАТЬ ЗАЯВКУ НА ВЫВОД</button>
+            <div id="withdraw-message" class="withdraw-message"></div>
+        </div>
     </div>
 
     <div id="promo-modal" class="promo-modal">
@@ -78,6 +93,5 @@
 
     <div id="error-message" class="error-message"></div>
     <script src="game.js"></script>
-
 </body>
 </html>
