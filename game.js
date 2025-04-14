@@ -250,3 +250,66 @@ confirmResetButton.addEventListener('click', () => {
 cancelResetButton.addEventListener('click', () => {
     resetModal.style.display = 'none';
 }); 
+
+// ... (все предыдущие переменные и функции остаются без изменений) ...
+
+// Добавляем переменные для вывода
+const withdrawButton = document.getElementById('withdraw-button');
+const withdrawModal = document.getElementById('withdraw-modal');
+const closeWithdrawModal = document.querySelector('.withdraw-modal-content .close-withdraw');
+const confirmWithdrawButton = document.getElementById('confirm-withdraw');
+const cardNumberInput = document.getElementById('card-number');
+const withdrawMessageElement = document.getElementById('withdraw-message');
+const availableBalanceElement = document.getElementById('available-balance');
+
+// Обработчик кнопки вывода
+withdrawButton.addEventListener('click', () => {
+    withdrawModal.style.display = 'flex';
+    availableBalanceElement.textContent = score;
+});
+
+// Закрытие модального окна вывода
+closeWithdrawModal.addEventListener('click', () => {
+    withdrawModal.style.display = 'none';
+});
+
+// Подтверждение вывода
+confirmWithdrawButton.addEventListener('click', () => {
+    const MIN_WITHDRAW = 1000000; // 1 млн чадов
+    const cardNumber = cardNumberInput.value.trim();
+    
+    // Проверка номера карты (простая валидация)
+    const cardRegex = /^[0-9]{16}$/;
+    
+    if (score < MIN_WITHDRAW) {
+        showWithdrawMessage(`Недостаточно средств. Минимальная сумма для вывода: 1,000,000 Чадов. У вас: ${score} Чадов`, 'error');
+        return;
+    }
+    
+    if (!cardRegex.test(cardNumber)) {
+        showWithdrawMessage('Введите корректный номер карты (16 цифр)', 'error');
+        return;
+    }
+    
+    // Если все проверки пройдены
+    score -= MIN_WITHDRAW;
+    scoreElement.textContent = score;
+    localStorage.setItem('score', score);
+    
+    showWithdrawMessage('Заявка на вывод 1,000,000 Чадов (≈0.05 грн) успешно подана! Ожидайте поступления средств в течение 3 рабочих дней.', 'success');
+    
+    // Очищаем поле и закрываем модальное окно через 3 секунды
+    cardNumberInput.value = '';
+    setTimeout(() => {
+        withdrawModal.style.display = 'none';
+        withdrawMessageElement.style.display = 'none';
+    }, 5000);
+});
+
+function showWithdrawMessage(message, type) {
+    withdrawMessageElement.textContent = message;
+    withdrawMessageElement.className = `withdraw-message ${type}`;
+    withdrawMessageElement.style.display = 'block';
+}
+
+// ... (остальной код остается без изменений) ...
