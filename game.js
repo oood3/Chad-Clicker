@@ -201,7 +201,7 @@ promoMessageElement.style.color = 'green'; // Устанавливаем зел�
                 scoreElement.textContent = score;
                 localStorage.setItem('score', score);
                 checkForUpgrades();
-            }, 20000);
+            }, 1000);
         } else {
 promoMessageElement.textContent = 'Этот промокод уже был использован';
             showPromoMessage(promoMessageElement.textContent);
