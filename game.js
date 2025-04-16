@@ -191,13 +191,13 @@ activatePromoButton.addEventListener('click', () => {
     if (promoCode === '') {
         promoMessageElement.textContent = 'Промокод не введен. Попробуйте еще раз.';
         showPromoMessage(promoMessageElement.textContent);
-    } else if (promoCode === 'Abnons25') {
+    } else if (promoCode === 'ChadClicker25') {
         if (!isPromoCodeUsed) {
             localStorage.setItem('promoCodeUsed', 'true');
 promoMessageElement.style.color = 'green'; // Устанавливаем зеленый цвет
             showPromoMessage('Промокод успешно активирован ждите приз!');
             setTimeout(() => {
-                score += 230000;
+                score += 50000;
                 scoreElement.textContent = score;
                 localStorage.setItem('score', score);
                 checkForUpgrades();
