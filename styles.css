@@ -1,64 +1,87 @@
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background-color: #f0f0f0;
+    margin: 0;
+    position: relative;
+    transition: background-image 0.5s ease;
     background-image: url('hand-holding-money-through-hole-yellow-paper-wall-vertical-image_253401-7181.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    background-repeat: no-repeat;
-    height: auto; /* Установите авто, чтобы высота адаптировалась к содержимому */
-    margin: 0;
-    /* overflow: hidden; Уберите или закомментируйте эту строку */
+    min-height: 100vh;
 }
 
 .container {
-    margin-top: 50px;
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 #clicker {
-    margin: 20px;
+    margin: 20px auto;
+    position: relative;
+    width: 200px;
+    height: 200px;
 }
 
 #clickable-image {
-    width: 200px;
+    width: 100%;
+    height: auto;
     cursor: pointer;
-    transition: transform 0.05s ease; /* Более быстрая анимация */
+    transition: transform 0.05s ease;
+    position: relative;
+    z-index: 1;
 }
 
 #clickable-image:active {
-    transform: scale(0.9); /* Лёгкое уменьшение для эффекта нажатия */
+    transform: scale(0.9);
+}
+
+#3d-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: none;
 }
 
 #upgrade-info {
     margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+#upgrade-info button {
+    padding: 10px 15px;
+    font-size: 14px;
+    min-width: 200px;
 }
 
 button {
     margin: 5px;
-    padding: 10px;
+    padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    transition: all 0.3s ease;
 }
 
-/* Убираем влияние анимации на клики */
+button:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
 .upgrade-animation {
     position: absolute;
     font-size: 24px;
     color: green;
     animation: fadeInUp 1s;
-    pointer-events: none; /* Это позволяет кликам проходить сквозь анимацию */
-}
-
-/* Эффект нажатия на кликер */
-#clickable-image {
-    width: 200px;
-    cursor: pointer;
-    transition: transform 0.05s ease;
-}
-
-#clickable-image:active {
-    transform: scale(0.9); /* Уменьшение изображения при клике */
+    pointer-events: none;
+    z-index: 100;
 }
 
 @keyframes fadeInUp {
@@ -74,7 +97,7 @@ button {
 
 .error-message {
     position: fixed;
-    top: 10px;
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
     background-color: #f44336;
@@ -82,300 +105,236 @@ button {
     padding: 15px;
     border-radius: 5px;
     display: none;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     animation: shake 0.5s;
 }
 
 @keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    50% { transform: translateX(10px); }
-    75% { transform: translateX(-10px); }
-    100% { transform: translateX(0); }
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    25% { transform: translateX(-50%) translateY(-5px); }
+    50% { transform: translateX(-50%) translateY(5px); }
+    75% { transform: translateX(-50%) translateY(-5px); }
 }
 
-.promo-modal, .reset-modal, .shop-modal {
+.modal {
     display: none;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
     justify-content: center;
     align-items: center;
 }
 
-.promo-modal-content, .reset-modal-content, .shop-modal-content {
+.modal-content {
     background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    width: 300px;
+    padding: 25px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
     max-height: 80vh;
     overflow-y: auto;
     position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: modalFadeIn 0.3s;
 }
 
-.promo-modal-content .close, .reset-modal-content .close-reset, .shop-modal-content .close-shop {
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.modal-content .close-shop,
+.modal-content .close-premium,
+.modal-content .close-promo,
+.modal-content .close-reset {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
+    top: 15px;
+    right: 15px;
+    font-size: 24px;
     cursor: pointer;
+    color: #888;
+    transition: color 0.3s;
+}
+
+.modal-content .close-shop:hover,
+.modal-content .close-premium:hover,
+.modal-content .close-promo:hover,
+.modal-content .close-reset:hover {
+    color: #333;
 }
 
 .promo-message {
-    margin-top: 10px;
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 5px;
     font-size: 16px;
-    color: #f44336;
 }
 
 .reset-button {
-    background-color: black;
-    border: 2px solid red;
+    background-color: #222;
+    border: 2px solid #ff4444;
     color: white;
-    margin-top: 20px;
 }
 
 .shop-button {
-    position: relative;
-    background: linear-gradient(to right, orange, green);
-    border: none;
+    background: linear-gradient(to right, #ff8a00, #e52e71);
     color: white;
-    font-size: 18px;
-    padding: 10px 20px;
-    cursor: pointer;
-    margin-top: 20px;
+    font-weight: bold;
+    position: relative;
     overflow: hidden;
 }
 
-.shop-button::before {
+.shop-button::after {
     content: '';
     position: absolute;
-    top: 50%;  /* Центрируем по вертикали */
-    left: -50px;  /* Начальная позиция луча */
-    width: 10px;  /* Узкая ширина луча */
-    height: 250%; /* Высота больше кнопки */
-    background: rgba(255, 255, 255, 0.5); /* Белый полупрозрачный луч */
-    filter: blur(4px); /* Размытие для мягкости */
-    transform: translateY(-50%) rotate(30deg); /* Центрирование и поворот на 30 градусов */
-    animation: shine 2s infinite; /* Анимация движения */
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        to bottom right,
+        rgba(255, 255, 255, 0) 45%,
+        rgba(255, 255, 255, 0.8) 50%,
+        rgba(255, 255, 255, 0) 55%
+    );
+    transform: rotate(30deg);
+    animation: shine 3s infinite;
 }
 
 @keyframes shine {
-    0% {
-        left: -50px; /* Начало вне кнопки */
-    }
-    100% {
-        left: 100%;  /* Конец за кнопкой */
-    }
+    0% { left: -50%; top: -50%; }
+    100% { left: 150%; top: 150%; }
 }
 
-.shop-button:hover {
-    opacity: 0.8;
+.premium-button {
+    background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    background-size: 400% 400%;
+    animation: rainbow 10s linear infinite;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+@keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 100% 50%; }
 }
 
 .buy-button {
-    background-color: green;
+    background-color: #4CAF50;
     color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    margin: 5px 0;
-    width: 100%;
+    margin-top: 10px;
 }
 
 .buy-button:hover {
-    opacity: 0.8;
+    background-color: #45a049;
 }
 
 .shop-image {
     width: 100%;
     height: auto;
+    max-height: 150px;
+    object-fit: contain;
+    border-radius: 5px;
     margin-bottom: 10px;
+    border: 1px solid #ddd;
 }
 
 .shop-item {
-    margin: 10px 0;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.shop-item:last-child {
+    border-bottom: none;
 }
 
 .selected-button {
-    background-color: orange !important;
-    color: white;
+    background-color: #FF9800 !important;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    margin: 0;
-    position: relative; /* Позволяет использовать абсолютное позиционирование для псевдоэлемента */
-}
-
-body::before {
-    content: '';
-    position: fixed; /* Фиксирует фон */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-image: url('hand-holding-money-through-hole-yellow-paper-wall-vertical-image_253401-7181.png');
-    background-size: cover;
-    background-position: center;
-    z-index: -1; /* Устанавливаем фоновый слой ниже остальных */
-}
-
-.container {
-    /* Оберните ваш контент в этот класс, чтобы установить его стиль */
-    padding: 20px; /* Добавьте отступы для вашего контента */
-}
-
-#animation {
-    position: absolute; /* Убедитесь, что элемент позиционируется абсолютно */
-    width: 50px; /* Ширина анимации */
-    height: 50px; /* Высота анимации */
-    background-color: red; /* Цвет анимации */
-    border-radius: 50%; /* Закругленные края */
-    pointer-events: none; /* Отключаем события мыши для анимации */
-}
-
-.animate {
-    animation: scaleUp 1s forwards; /* Пример анимации */
-}
-
-@keyframes scaleUp {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(2);
-        opacity: 0; /* Исчезает после увеличения */
-    }
-}
-
-/* Анимация увеличения для кнопок при входе в магазин */
-@keyframes grow {
-    0% {
-        transform: scale(0);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-.shop-modal-content .buy-button {
-    animation: grow 0.5s ease;
-}
-
-* {
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-* {
-    user-select: none; /* Отключает выделение текста */
-    -webkit-user-select: none; /* Отключает выделение текста в Safari */
-    -ms-user-select: none; /* Отключает выделение текста в старых версиях IE */
-}
-
-/* ... (все предыдущие стили остаются без изменений) ... */
-
-.withdraw-button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
-    margin: 5px;
-    border-radius: 5px;
-}
-
-.withdraw-button:hover {
-    background-color: #45a049;
-}
-
-.withdraw-modal {
+.premium-badge {
     display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.withdraw-modal-content {
-    background: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    width: 300px;
-    position: relative;
-}
-
-.withdraw-modal-content .close-withdraw {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.withdraw-modal-content input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.withdraw-modal-content button {
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.withdraw-modal-content button:hover {
-    background-color: #45a049;
-}
-
-.withdraw-message {
-    margin-top: 10px;
-    padding: 10px;
-    border-radius: 4px;
-    display: none;
-}
-
-.withdraw-message.success {
-    background-color: #dff0d8;
-    color: #3c763d;
-    display: block;
-}
-
-.withdraw-message.error {
-    background-color: #f2dede;
-    color: #a94442;
-    display: block;
-}
-
-/* ... предыдущие стили ... */
-
-.card-warning {
-    color: #666;
+    background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+    background-size: 400% 400%;
+    animation: rainbow 3s linear infinite;
+    padding: 3px 10px;
+    border-radius: 15px;
     font-size: 12px;
-    margin-top: -5px;
-    margin-bottom: 10px;
+    margin-left: 10px;
+    color: white;
+    font-weight: bold;
+    vertical-align: middle;
 }
 
-.withdraw-modal-content input[type="tel"] {
-    letter-spacing: 1px;
-    font-family: monospace;
+.premium-features {
+    text-align: left;
+    margin: 20px 0;
+}
+
+.premium-features ul {
+    padding-left: 20px;
+    line-height: 1.6;
+}
+
+.premium-features li {
+    margin-bottom: 8px;
+}
+
+.hidden {
+    display: none;
+}
+
+#paypal-button-container {
+    margin: 20px 0;
+    min-height: 40px;
+}
+
+#custom-background-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+#custom-background-section button {
+    margin: 5px;
+    padding: 8px 15px;
+    font-size: 14px;
+}
+
+#background-upload {
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.rainbow-effect {
+    animation: rainbow-click 0.5s linear;
+}
+
+@keyframes rainbow-click {
+    0% { filter: hue-rotate(0deg) opacity(0.8); }
+    100% { filter: hue-rotate(360deg) opacity(1); }
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+    
+    #upgrade-info button {
+        min-width: 150px;
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+    
+    .modal-content {
+        width: 95%;
+        padding: 15px;
+    }
 }

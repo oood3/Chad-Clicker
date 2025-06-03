@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Кликер Чадов</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=ATr-7Gn9pzecS6jP6imWsNWN2Y90AKxjP2yxRH4JIDXVT9qYTPaer0frmHeBjxfLnB6r_vxOtdRzppfN&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Чады: <span id="score">0</span></h1>
+        <h1>Чады: <span id="score">0</span> <span id="premium-badge" class="premium-badge">PREMIUM</span></h1>
         <div id="clicker">
+            <div id="3d-container"></div>
             <img id="clickable-image" src="your-image.png" alt="Кликни меня">
         </div>
         <div id="upgrade-info">
@@ -27,14 +30,14 @@
             <button id="upgrade-12">Улучшение 12 - 1000000000 Чадов</button>
         </div>
         <button id="promo-button">ПРОМОКОДЫ</button>
-        <button id="withdraw-button" class="withdraw-button">ВЫВОД СРЕДСТВ</button>
         <button id="reset-button" class="reset-button">СБРОС ИГРЫ</button>
         <button id="shop-button" class="shop-button">МАГАЗИН</button>
+        <button id="premium-button" class="premium-button">CHAD CLICKER PREMIUM</button>
     </div>
 
     <!-- Модальное окно магазина -->
-    <div id="shop-modal" class="shop-modal">
-        <div class="shop-modal-content">
+    <div id="shop-modal" class="modal">
+        <div class="modal-content">
             <span class="close-shop">&times;</span>
             <h2>МАГАЗИН</h2>
             <div class="shop-item">
@@ -58,35 +61,42 @@
         </div>
     </div>
 
-    <!-- Модальное окно вывода средств -->
-<div id="withdraw-modal" class="withdraw-modal">
-    <div class="withdraw-modal-content">
-        <span class="close-withdraw">&times;</span>
-        <h2>ВЫВОД СРЕДСТВ</h2>
-        <p>Минимальная сумма для вывода: 1,000,000 Чадов (≈0.05 грн)</p>
-        <p>Доступно для вывода: <span id="available-balance">0</span> Чадов</p>
-        <input type="tel" id="card-number" 
-               placeholder="Номер карты (Visa/Mastercard)" 
-               pattern="[0-9]{16}" 
-               inputmode="numeric"
-               maxlength="19">
-        <p class="card-warning">Введите ровно 16 цифр номера карты (пример: 1234 5678 9012 3456)</p>
-        <button id="confirm-withdraw">ПОДАТЬ ЗАЯВКУ НА ВЫВОД</button>
-        <div id="withdraw-message" class="withdraw-message"></div>
+    <!-- Модальное окно премиум -->
+    <div id="premium-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-premium">&times;</span>
+            <h2>CHAD CLICKER PREMIUM</h2>
+            <div class="premium-features">
+                <h3>Преимущества PREMIUM:</h3>
+                <ul>
+                    <li>3D модель Чада вместо 2D изображения</li>
+                    <li>Радужный эффект при кликах</li>
+                    <li>Возможность загружать свои фоны</li>
+                    <li>Эксклюзивный значок PREMIUM</li>
+                </ul>
+            </div>
+            <div id="paypal-button-container"></div>
+            <div id="custom-background-section" class="hidden">
+                <h3>Настройка фона</h3>
+                <input type="file" id="background-upload" accept="image/*">
+                <button id="set-background">Установить фон</button>
+                <button id="reset-background">Стандартный фон</button>
+            </div>
+        </div>
     </div>
-</div>
 
-    <div id="promo-modal" class="promo-modal">
-        <div class="promo-modal-content">
-            <span class="close">&times;</span>
+    <div id="promo-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-promo">&times;</span>
             <h2>Введите промокод</h2>
             <input type="text" id="promo-code" placeholder="Введите промокод">
             <button id="activate-promo">Активировать</button>
             <div id="promo-message" class="promo-message"></div>
         </div>
     </div>
-    <div id="reset-modal" class="reset-modal">
-        <div class="reset-modal-content">
+
+    <div id="reset-modal" class="modal">
+        <div class="modal-content">
             <span class="close-reset">&times;</span>
             <h2>Подтверждение сброса</h2>
             <p>Если вы нажмете кнопку «Да, сбросить», ваш аккаунт будет полностью сброшен: вся валюта, скины, улучшения будут сброшены!</p>
